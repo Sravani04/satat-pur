@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SATAT PUR - Mobile 3D Studio | ISWK Class 1 A</title>
 
     <!-- Tailwind CSS -->
@@ -32,39 +32,81 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #030712;
-            color: #ffffff;
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
             margin: 0;
             padding: 0;
+            overflow: hidden;
+            background-color: #030712;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            touch-action: manipulation;
         }
 
-        .phone-frame {
-            width: 100vw;
-            height: 100vh;
-            max-width: 430px;
-            max-height: 900px;
-            background-color: #090d16;
+        .iphone-container {
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+            width: min(393px, 94vw);
+            height: min(852px, 94dvh);
+            max-height: 96dvh;
+            background-color: #080d1a;
+            border-radius: 46px;
+            box-shadow: 0 0 0 4px #2b2724, 0 0 0 6px #4b4642, 0 20px 50px rgba(0, 0, 0, 0.9);
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        @media (min-width: 480px) {
-            .phone-frame {
-                border: 12px solid #1e293b;
-                border-radius: 48px;
-                height: 88vh;
-            }
+        .dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 30px;
+            background-color: #000000;
+            border-radius: 20px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            pointer-events: none;
+        }
+
+        .camera-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #0b1322;
+            border-radius: 50%;
+            border: 1px solid #1e293b;
+        }
+
+        .sensor-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #090e1a;
+            border-radius: 50%;
+        }
+
+        .home-bar {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 2px;
+            z-index: 50;
+            pointer-events: none;
         }
 
         #webgl-canvas {
@@ -78,20 +120,20 @@
         }
 
         .glass-card {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-            height: 4px;
+            height: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.3);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #10b981;
+            background: #2e7d32;
             border-radius: 4px;
         }
 
@@ -100,91 +142,98 @@
         }
 
         @keyframes pulse-glow-anim {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.8); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Smartphone Wrapper -->
-    <div class="phone-frame" id="phoneContainer">
+    <div class="iphone-container" id="phoneContainer">
 
-        <!-- Initial Start Audio Banner Overlay (Guarantees Mobile Audio Unlock) -->
-        <div id="startAudioOverlay" onclick="startIntroSpeech()" ontouchend="startIntroSpeech(event)" class="absolute inset-0 z-30 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all">
-            <div class="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl mb-4 shadow-xl animate-bounce">
+        <div class="dynamic-island">
+            <div class="camera-dot"></div>
+            <div class="flex items-center space-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="sensor-dot"></div>
+            </div>
+        </div>
+
+        <div class="home-bar"></div>
+
+        <!-- Initial Start Audio Banner Overlay -->
+        <div id="startAudioOverlay" class="absolute inset-0 z-40 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all">
+            <div class="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-green-500 rounded-2xl flex items-center justify-center text-white text-2xl mb-4 shadow-xl animate-bounce border border-emerald-400/30">
                 <i class="fa-solid fa-volume-high"></i>
             </div>
-            <h3 class="text-base font-bold text-white mb-1">Tap Anywhere to Start Studio</h3>
-            <p class="text-xs text-slate-300 max-w-[260px]">Activate audio speech & 3D touch interaction by Class 1 A Eco-Kids</p>
+            <h3 class="text-base font-bold text-white mb-1">Tap Anywhere to Start</h3>
+            <p class="text-xs text-slate-300 max-w-[250px]">Enable audio narration and enter the Satat Pur 3D exhibition</p>
         </div>
 
         <!-- 3D WebGL Canvas -->
         <div id="webgl-canvas"></div>
 
-        <!-- Top Mobile Header -->
-        <header class="absolute top-3 left-3 right-3 z-20 flex justify-between items-center pointer-events-none gap-2">
-            <div class="glass-card px-3.5 py-2 rounded-2xl pointer-events-auto flex items-center space-x-2.5 shadow-lg border-l-4 border-emerald-500">
-                <div class="bg-gradient-to-br from-emerald-500 to-green-700 text-white p-2 rounded-xl shadow text-center">
-                    <i class="fa-solid fa-city text-sm"></i>
+        <!-- Top Navigation Header -->
+        <header class="absolute top-11 left-2.5 right-2.5 z-20 flex justify-between items-center pointer-events-none gap-1.5">
+            <div class="glass-card px-2.5 py-1.5 rounded-xl pointer-events-auto flex items-center space-x-2 shadow-lg border-l-4 border-emerald-500">
+                <div class="bg-gradient-to-br from-emerald-500 to-green-700 text-white p-1.5 rounded-lg shadow text-center">
+                    <i class="fa-solid fa-city text-xs"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-xs tracking-tight text-white leading-tight">SATAT PUR</h1>
-                    <p class="text-[10px] text-amber-400 font-semibold">ISWK Class 1 A</p>
+                    <h1 class="font-bold text-[11px] tracking-tight text-white leading-tight">SATAT PUR</h1>
+                    <p class="text-[9px] text-amber-400 font-semibold">ISWK Class 1 A</p>
                 </div>
             </div>
 
-            <div class="glass-card px-2.5 py-1.5 rounded-2xl pointer-events-auto flex items-center space-x-2 shadow-lg">
-                <button onclick="toggleDayNight()" id="dayNightBtn" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs flex items-center justify-center transition border border-slate-700">
+            <div class="glass-card px-2 py-1 rounded-xl pointer-events-auto flex items-center space-x-1.5 shadow-lg">
+                <button onclick="toggleDayNight()" id="dayNightBtn" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs flex items-center justify-center transition border border-slate-700">
                     <i class="fa-solid fa-sun" id="dayNightIcon"></i>
                 </button>
-                <button onclick="toggleAudioSpeech()" id="audioBtn" class="w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center justify-center transition">
+                <button onclick="toggleAudioSpeech()" id="audioBtn" class="w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center justify-center transition">
                     <i class="fa-solid fa-volume-high" id="audioIcon"></i>
                 </button>
             </div>
         </header>
 
-        <!-- Floating Bottom Control Panel -->
-        <div class="absolute bottom-3 left-3 right-3 z-20 flex flex-col pointer-events-auto gap-2">
+        <!-- Floating Bottom UI Controls -->
+        <div class="absolute bottom-4 left-2.5 right-2.5 z-20 flex flex-col pointer-events-auto gap-1.5">
             
-            <!-- Quick Feature Buttons -->
-            <div class="glass-card p-2 rounded-2xl flex items-center gap-1.5 shadow-2xl overflow-x-auto custom-scrollbar">
-                <button onclick="selectHotspot('maglev')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
+            <div class="glass-card p-1.5 rounded-xl flex items-center gap-1 shadow-2xl overflow-x-auto custom-scrollbar">
+                <button onclick="selectHotspot('maglev')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
                     <i class="fa-solid fa-train text-amber-400"></i> Maglev
                 </button>
-                <button onclick="selectHotspot('verticalgarden')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-seedling text-pink-400"></i> Garden & Flowers
-                </button>
-                <button onclick="selectHotspot('trees')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-tree text-emerald-400"></i> Green Canopy
-                </button>
-                <button onclick="selectHotspot('solar')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-solar-panel text-yellow-400"></i> Solar Panels
-                </button>
-                <button onclick="selectHotspot('ebus')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-bus-simple text-green-400"></i> E-Bus
-                </button>
-                <button onclick="selectHotspot('evcars')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-car-side text-red-400"></i> EV Cars
-                </button>
-                <button onclick="selectHotspot('wind')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
+                <button onclick="selectHotspot('wind')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
                     <i class="fa-solid fa-wind text-sky-400"></i> Windmills
                 </button>
-                <button onclick="selectHotspot('lake')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-water text-cyan-400"></i> Lake
+                <button onclick="selectHotspot('solar')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-solar-panel text-yellow-400"></i> Solar
+                </button>
+                <button onclick="selectHotspot('verticalgarden')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-leaf text-emerald-400"></i> Garden
+                </button>
+                <button onclick="selectHotspot('trees')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-tree text-green-400"></i> Trees
+                </button>
+                <button onclick="selectHotspot('ebus')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-bus-simple text-cyan-400"></i> E-Bus
+                </button>
+                <button onclick="selectHotspot('evcars')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-car-side text-red-400"></i> EV Cars
+                </button>
+                <button onclick="selectHotspot('lake')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-water text-teal-400"></i> Lake
                 </button>
             </div>
 
-            <!-- Active Inspector Card -->
-            <div id="inspectorCard" class="glass-card p-3.5 rounded-2xl border border-emerald-500/40 shadow-2xl relative">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
-                    <span id="inspectBadge" class="text-[9px] font-bold uppercase px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">Select Element</span>
-                    <button onclick="resetInspectView()" class="text-[10px] text-slate-400 hover:text-white"><i class="fa-solid fa-rotate-right mr-1"></i>Reset</button>
+            <div id="inspectorCard" class="glass-card p-2.5 rounded-xl border border-emerald-500/40 shadow-2xl relative">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-1 mb-1">
+                    <span id="inspectBadge" class="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">Select Element</span>
+                    <button onclick="resetInspectView()" class="text-[9px] text-slate-400 hover:text-white"><i class="fa-solid fa-rotate-right mr-1"></i>Reset</button>
                 </div>
-                <h4 id="inspectTitle" class="text-xs font-bold text-white mb-0.5">Tap any object in 3D scene</h4>
-                <p id="inspectDesc" class="text-[11px] text-slate-300 leading-snug font-inter">
-                    Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap any model element or use the buttons above to hear descriptions.
+                <h4 id="inspectTitle" class="text-[11px] font-bold text-white mb-0.5">Tap any object in 3D scene</h4>
+                <p id="inspectDesc" class="text-[10px] text-slate-300 leading-tight font-inter">
+                    Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap model elements to hear audio narration.
                 </p>
             </div>
 
@@ -192,58 +241,57 @@
 
     </div>
 
-    <!-- 3D Engine Script with Robust Mobile Touch Handlers -->
+    <!-- 3D Engine & Mobile Touch Raycasting Script -->
     <script>
         let scene, camera, renderer, controls;
         let trainMesh, eBusMesh, fountainParticles = [], turbineBlades = [];
         let clickableObjects = [];
         let dayNightState = true;
         let synth = window.speechSynthesis;
-        let hasIntroPlayed = false;
         let audioUnlocked = false;
 
         const hotspotData = {
             maglev: {
                 title: "Elevated Bullet Maglev Train",
                 badge: "Zero-Emission Rail",
-                desc: "Aerodynamic high-speed bullet train gliding smoothly on elevated green pillars above the road loop using magnetic levitation for zero-pollution public transit.",
+                desc: "Aerodynamic high-speed bullet train that glides smoothly on elevated green pillars above the road loop using magnetic levitation for zero-pollution public transit.",
                 speech: "This is the elevated Maglev bullet train. It glides smoothly on green support pillars above the road loop using magnetic levitation for zero-pollution public transit."
-            },
-            verticalgarden: {
-                title: "Vertical Garden & Floral Wall",
-                badge: "Urban Greening",
-                desc: "Lush vertical planter wall embedded with vibrant colorful blooming flowers and foliage that purify air, dampen urban noise, and cool building facades.",
-                speech: "This is the vertical garden wall. It features vibrant colorful blooming flowers and lush greenery that purify city air and reduce urban heat."
-            },
-            trees: {
-                title: "Lush Green Urban Canopy",
-                badge: "Eco Forest Grid",
-                desc: "Dense pine and broadleaf shade trees planted along streets, lakefronts, and plazas to absorb carbon emissions and provide fresh oxygen.",
-                speech: "These are green canopy trees scattered across the landscape. They capture carbon dioxide, provide shade, and create a healthy ecosystem."
-            },
-            solar: {
-                title: "Rooftop Photovoltaic Solar Panels",
-                badge: "Clean Energy",
-                desc: "High-efficiency rooftop solar arrays harvesting abundant solar radiation to supply clean power to streetlights, EV chargers, and buildings.",
-                speech: "These are rooftop solar panels. They harvest sunlight to generate clean electricity for the entire city."
-            },
-            ebus: {
-                title: "Zero-Emission Electric Bus",
-                badge: "Eco Public Transport",
-                desc: "Powered entirely by battery packs with dynamic induction charging stops along the route, driving continuously around the city loop.",
-                speech: "This is the moving zero-emission electric bus. It runs quietly on solar battery power along the city road loop to reduce air pollution."
-            },
-            evcars: {
-                title: "Electric Sports Cars & Solar Charging Hub",
-                badge: "Clean Mobility",
-                desc: "Aerodynamic electric sports cars linked to fast-charging solar ports, promoting eco-friendly private transit without tailpipe exhaust.",
-                speech: "These are sleek electric sports cars parked near rapid solar charging stations, producing zero emissions to keep our city air clean."
             },
             wind: {
                 title: "Eco Wind Turbines",
                 badge: "Renewable Power",
                 desc: "Converts natural wind breeze into clean electricity, complementing the solar grid for uninterrupted sustainable energy.",
                 speech: "These are eco wind turbines. They convert natural breeze into clean electricity for continuous sustainable power."
+            },
+            solar: {
+                title: "Rooftop Solar Panels",
+                badge: "Clean Energy",
+                desc: "High-efficiency photovoltaic solar panels installed on building rooftops to harvest sunlight and power city infrastructure sustainably.",
+                speech: "These are rooftop solar panels. They harvest sunlight to generate clean electricity for the entire city."
+            },
+            verticalgarden: {
+                title: "Vertical Garden Wall & Flowers",
+                badge: "Urban Greening",
+                desc: "Lush vertical greenery planted along building facades featuring bright red, yellow, pink, and orange flower clusters to purify city air and enhance urban biodiversity.",
+                speech: "This is the vertical garden wall. Lush foliage planted with colorful flower blooms purifies city air and improves biodiversity."
+            },
+            trees: {
+                title: "Urban Green Trees",
+                badge: "Eco Canopy",
+                desc: "Dense green leafy canopy trees planted across city avenues, absorbing carbon emissions and providing cool shaded areas for citizens.",
+                speech: "These are green leafy trees planted across avenues to absorb carbon dioxide and cool down the city environment."
+            },
+            ebus: {
+                title: "Moving Zero-Emission Electric Bus",
+                badge: "Eco Public Transport",
+                desc: "Powered entirely by quiet solar battery packs with wireless dynamic inductive charging stops along the route, driving continuously around the city loop.",
+                speech: "This is the moving zero-emission electric bus. It runs quietly on solar battery power along the city road loop to reduce air pollution."
+            },
+            evcars: {
+                title: "Electric Sports Cars & Charging Hub",
+                badge: "Clean Mobility",
+                desc: "Sleek aerodynamic electric sports cars with dual solar charging stations. They produce zero emissions to keep our city air clean and fresh.",
+                speech: "These are sleek electric sports cars parked near rapid solar charging stations, producing zero emissions to keep our city air clean."
             },
             lake: {
                 title: "Central Clean Lake & Fountain",
@@ -257,52 +305,39 @@
             if (!synth) return null;
             const voices = synth.getVoices();
             return voices.find(v => v.lang === 'en-IN' || v.lang.includes('en_IN') || v.name.includes('India') || v.name.includes('Hindi')) ||
-                   voices.find(v => v.lang.startsWith('en')) || voices[0] || null;
+                   voices.find(v => v.lang.startsWith('en')) || null;
         }
 
         function speakText(text) {
             if (!synth) return;
-            
-            // Cancel any ongoing speech immediately to prevent queuing lag
-            synth.cancel();
+            try {
+                if (synth.speaking) synth.cancel();
 
-            const utterThis = new SpeechSynthesisUtterance(text);
-            utterThis.lang = 'en-IN';
-            utterThis.rate = 0.95;
+                const utterThis = new SpeechSynthesisUtterance(text);
+                utterThis.lang = 'en-IN';
+                utterThis.rate = 0.95;
 
-            const voice = getIndianVoice();
-            if (voice) utterThis.voice = voice;
+                const inVoice = getIndianVoice();
+                if (inVoice) utterThis.voice = inVoice;
 
-            // Trigger speech
-            synth.speak(utterThis);
+                synth.speak(utterThis);
+            } catch (e) {
+                console.log("Audio synthesis error:", e);
+            }
         }
 
-        function startIntroSpeech(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+        function unlockMobileAudio(e) {
+            if (!audioUnlocked) {
+                audioUnlocked = true;
+                const overlay = document.getElementById('startAudioOverlay');
+                if (overlay) overlay.style.display = 'none';
 
-            const overlay = document.getElementById('startAudioOverlay');
-            if (overlay) {
-                overlay.style.opacity = '0';
-                setTimeout(() => { overlay.style.display = 'none'; }, 300);
-            }
+                if (synth) {
+                    const silentUtter = new SpeechSynthesisUtterance('');
+                    synth.speak(silentUtter);
+                }
 
-            audioUnlocked = true;
-
-            // Force browser audio engine warm-up on mobile
-            if (synth) {
-                const warmup = new SpeechSynthesisUtterance(" ");
-                warmup.volume = 0;
-                synth.speak(warmup);
-            }
-
-            if (!hasIntroPlayed) {
-                hasIntroPlayed = true;
-                setTimeout(() => {
-                    speakText("Welcome to Satat Pur, a smart and sustainable Indian city created by Class 1 A students Nour, Avyukth, Brahmani, and Syed Affan from Indian School Al Wadi Al Kabir.");
-                }, 200);
+                speakText("Welcome to Satat Pur, a smart and sustainable Indian city created by Class 1 A students Nour, Avyukth, Brahmani, and Syed Affan from Indian School Al Wadi Al Kabir.");
             }
         }
 
@@ -316,7 +351,7 @@
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.set(0, 24, 34);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.shadowMap.enabled = true;
@@ -332,10 +367,29 @@
             setupLighting();
             buildBaseModel();
 
+            // Setup overlay touch/click trigger
+            const overlay = document.getElementById('startAudioOverlay');
+            overlay.addEventListener('click', unlockMobileAudio);
+            overlay.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                unlockMobileAudio();
+            });
+
+            // Dedicated Canvas Touch and Click Raycasting
+            const canvasEl = renderer.domElement;
+            canvasEl.addEventListener('click', handleInteraction);
+            canvasEl.addEventListener('touchend', (e) => {
+                if (e.changedTouches.length > 0) {
+                    const touch = e.changedTouches[0];
+                    handleInteraction({
+                        clientX: touch.clientX,
+                        clientY: touch.clientY,
+                        target: e.target
+                    });
+                }
+            }, { passive: true });
+
             window.addEventListener('resize', onWindowResize);
-            
-            // Robust universal pointer/touch interaction listeners for mobile canvas tapping
-            container.addEventListener('pointerdown', handleCanvasInteraction, { passive: false });
 
             if (synth && synth.onvoiceschanged !== undefined) {
                 synth.onvoiceschanged = () => getIndianVoice();
@@ -347,17 +401,16 @@
         let ambientLight, dirLight;
 
         function setupLighting() {
-            ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
             scene.add(ambientLight);
 
-            dirLight = new THREE.DirectionalLight(0xfff8e7, 1.25);
+            dirLight = new THREE.DirectionalLight(0xfff8e7, 1.2);
             dirLight.position.set(20, 35, 15);
             dirLight.castShadow = true;
             scene.add(dirLight);
         }
 
         function buildBaseModel() {
-            // Main landscape base
             const baseMesh = new THREE.Mesh(
                 new THREE.BoxGeometry(34, 1, 26),
                 new THREE.MeshStandardMaterial({ color: 0x1b5e20, roughness: 0.6 })
@@ -365,7 +418,6 @@
             baseMesh.position.y = -0.5;
             scene.add(baseMesh);
 
-            // Backdrop Board
             const board = new THREE.Mesh(
                 new THREE.BoxGeometry(34, 14, 0.8),
                 new THREE.MeshStandardMaterial({ color: 0x0288d1, roughness: 0.4 })
@@ -373,7 +425,6 @@
             board.position.set(0, 7, -12.5);
             scene.add(board);
 
-            // Central Lake
             const lake = new THREE.Mesh(
                 new THREE.CylinderGeometry(4.5, 4.5, 0.1, 32),
                 new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.1, metalness: 0.8 })
@@ -388,24 +439,23 @@
             createElevatedMaglevTrack(0, 2);
             createEcoBuildingsWithSolar();
             createVerticalGardenWithFlowers();
-            createLandscapeTrees();
+            createGreenTrees();
             createWindmills();
             createElectricBus();
             createElectricSportsCars();
-            createSmartInfrastructure();
         }
 
         function createFountain(x, y, z) {
-            const count = 35;
+            const count = 30;
             const geo = new THREE.BufferGeometry();
             const positions = new Float32Array(count * 3);
             for (let i = 0; i < count; i++) {
                 positions[i * 3] = x + (Math.random() - 0.5) * 0.4;
-                positions[i * 3 + 1] = y + 1 + Math.random() * 1.6;
+                positions[i * 3 + 1] = y + 1 + Math.random() * 1.5;
                 positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.4;
             }
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const pSystem = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xe0f7fa, size: 0.28, transparent: true, opacity: 0.85 }));
+            const pSystem = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xe0f7fa, size: 0.25, transparent: true, opacity: 0.8 }));
             scene.add(pSystem);
             fountainParticles.push(pSystem);
         }
@@ -443,6 +493,7 @@
             }
 
             const trainGroup = new THREE.Group();
+            trainGroup.userData = { key: 'maglev' };
             const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.8, roughness: 0.15 });
             const blueMat = new THREE.MeshStandardMaterial({ color: 0x0288d1, metalness: 0.5 });
             const windowMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 });
@@ -450,28 +501,22 @@
             const nose = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.6, 16), bodyMat);
             nose.rotation.z = -Math.PI / 2;
             nose.position.x = 2.4;
+            nose.userData = { key: 'maglev' };
             trainGroup.add(nose);
 
             const car1 = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 3.2, 16), bodyMat);
             car1.rotation.z = Math.PI / 2;
             car1.position.x = 0.8;
+            car1.userData = { key: 'maglev' };
             trainGroup.add(car1);
 
             const car2 = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 3.2, 16), bodyMat);
             car2.rotation.z = Math.PI / 2;
             car2.position.x = -2.6;
+            car2.userData = { key: 'maglev' };
             trainGroup.add(car2);
 
-            const stripe1 = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.15, 1.15), blueMat);
-            stripe1.position.set(-0.8, 0, 0);
-            trainGroup.add(stripe1);
-
-            const winStrip = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.25, 1.12), windowMat);
-            winStrip.position.set(-0.8, 0.18, 0);
-            trainGroup.add(winStrip);
-
             trainGroup.position.set(cx + 11, 3.8, cz);
-            trainGroup.userData = { key: 'maglev' };
             scene.add(trainGroup);
             trainMesh = trainGroup;
             clickableObjects.push(trainGroup);
@@ -480,7 +525,6 @@
         function createEcoBuildingsWithSolar() {
             const solarMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, metalness: 0.9, roughness: 0.1 });
 
-            // Building 1
             const b1 = new THREE.Mesh(
                 new THREE.BoxGeometry(5, 7, 4),
                 new THREE.MeshStandardMaterial({ color: 0x4e342e })
@@ -494,7 +538,6 @@
             scene.add(solar1);
             clickableObjects.push(solar1);
 
-            // Building 2
             const b2 = new THREE.Mesh(
                 new THREE.BoxGeometry(5.5, 9, 4.5),
                 new THREE.MeshStandardMaterial({ color: 0xfbc02d })
@@ -511,101 +554,96 @@
 
         function createVerticalGardenWithFlowers() {
             const vgGroup = new THREE.Group();
+            vgGroup.userData = { key: 'verticalgarden' };
             
             const frame = new THREE.Mesh(
-                new THREE.BoxGeometry(4.2, 5.2, 0.4),
+                new THREE.BoxGeometry(3.5, 4.5, 0.4),
                 new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 })
             );
-            frame.position.y = 2.6;
+            frame.position.y = 2.25;
+            frame.userData = { key: 'verticalgarden' };
             vgGroup.add(frame);
 
             const foliage = new THREE.Mesh(
-                new THREE.BoxGeometry(3.9, 4.9, 0.45),
+                new THREE.BoxGeometry(3.3, 4.3, 0.45),
                 new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 })
             );
-            foliage.position.y = 2.6;
+            foliage.position.y = 2.25;
+            foliage.userData = { key: 'verticalgarden' };
             vgGroup.add(foliage);
 
-            const flowerColors = [0xef4444, 0xf59e0b, 0xec4899, 0x3b82f6, 0xa855f7, 0xfacc15];
-            for (let r = 0; r < 6; r++) {
-                for (let c = 0; c < 5; c++) {
-                    const fx = -1.4 + c * 0.7;
-                    const fy = 0.8 + r * 0.75;
-                    const color = flowerColors[(r + c) % flowerColors.length];
-                    const flMat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.3 });
-
-                    const bloom = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), flMat);
-                    bloom.position.set(fx + (Math.random() - 0.5) * 0.1, fy, 0.26);
-                    vgGroup.add(bloom);
-                }
+            const flowerColors = [0xef4444, 0xec4899, 0xeab308, 0xf97316];
+            for (let i = 0; i < 24; i++) {
+                const color = flowerColors[i % flowerColors.length];
+                const flower = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.12 + Math.random() * 0.08, 8, 8),
+                    new THREE.MeshStandardMaterial({ color: color, roughness: 0.3 })
+                );
+                flower.position.set(
+                    (Math.random() - 0.5) * 2.8,
+                    0.5 + Math.random() * 3.5,
+                    0.25
+                );
+                flower.userData = { key: 'verticalgarden' };
+                vgGroup.add(flower);
             }
 
             vgGroup.position.set(9.5, 0, -4);
-            vgGroup.userData = { key: 'verticalgarden' };
             scene.add(vgGroup);
             clickableObjects.push(vgGroup);
         }
 
-        function createLandscapeTrees() {
-            const treeGroupMaster = new THREE.Group();
-
-            const createSingleTree = (x, z, scale = 1, type = 'canopy') => {
-                const tGroup = new THREE.Group();
-                const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.9 });
-                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18 * scale, 0.26 * scale, 1.8 * scale, 8), trunkMat);
-                trunk.position.y = (0.9 * scale);
-                tGroup.add(trunk);
-
-                if (type === 'canopy') {
-                    const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.6 });
-                    const top1 = new THREE.Mesh(new THREE.SphereGeometry(0.85 * scale, 8, 8), leafMat);
-                    top1.position.y = (2.1 * scale);
-                    tGroup.add(top1);
-                } else {
-                    const pineMat = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.7 });
-                    const c1 = new THREE.Mesh(new THREE.ConeGeometry(0.9 * scale, 1.5 * scale, 8), pineMat);
-                    c1.position.y = (1.8 * scale);
-                    tGroup.add(c1);
-                }
-
-                tGroup.position.set(x, 0, z);
-                tGroup.userData = { key: 'trees' };
-                treeGroupMaster.add(tGroup);
-                clickableObjects.push(tGroup);
-            };
-
-            const treeCoords = [
-                { x: -13, z: -8, s: 1.1, t: 'canopy' },
-                { x: -11, z: -10, s: 0.9, t: 'pine' },
-                { x: -14, z: 2, s: 1.2, t: 'canopy' },
-                { x: -12, z: 6, s: 1.0, t: 'pine' },
-                { x: -10, z: 9, s: 1.1, t: 'canopy' },
-                { x: -4, z: 10, s: 1.0, t: 'canopy' },
-                { x: 4, z: 10, s: 0.95, t: 'pine' },
-                { x: 11, z: 8, s: 1.15, t: 'canopy' },
-                { x: 13, z: 2, s: 1.0, t: 'pine' },
-                { x: 13, z: -8, s: 1.2, t: 'canopy' },
-                { x: 6, z: -10, s: 0.9, t: 'pine' }
+        function createGreenTrees() {
+            const treePositions = [
+                { x: -10, z: 6 }, { x: -11, z: 2 }, { x: -9, z: 9 },
+                { x: 10, z: 6 }, { x: 11, z: 1 }, { x: 9, z: 9 },
+                { x: -3, z: 8 }, { x: 3, z: 8 }, { x: 0, z: -3 }
             ];
 
-            treeCoords.forEach(tc => createSingleTree(tc.x, tc.z, tc.s, tc.t));
-            scene.add(treeGroupMaster);
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
+            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x1e8449, roughness: 0.6 });
+
+            treePositions.forEach(pos => {
+                const treeGroup = new THREE.Group();
+                treeGroup.userData = { key: 'trees' };
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.25, 1.8, 12), trunkMat);
+                trunk.position.y = 0.9;
+                trunk.userData = { key: 'trees' };
+                treeGroup.add(trunk);
+
+                const leaves1 = new THREE.Mesh(new THREE.ConeGeometry(1.2, 2.2, 12), leavesMat);
+                leaves1.position.y = 2.4;
+                leaves1.userData = { key: 'trees' };
+                treeGroup.add(leaves1);
+
+                treeGroup.position.set(pos.x, 0, pos.z);
+                scene.add(treeGroup);
+                clickableObjects.push(treeGroup);
+            });
         }
 
         function createWindmills() {
             const createTurbine = (x, z) => {
                 const group = new THREE.Group();
-                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.2, 6, 16), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-                pole.position.y = 3;
+                group.userData = { key: 'wind' };
+
+                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.3, 6.5, 16), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+                pole.position.y = 3.25;
+                pole.userData = { key: 'wind' };
                 group.add(pole);
 
                 const bladeGroup = new THREE.Group();
-                bladeGroup.position.set(0, 6, 0.25);
+                bladeGroup.position.set(0, 6.2, 0.3);
+                bladeGroup.userData = { key: 'wind' };
+
                 for (let i = 0; i < 3; i++) {
-                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.2, 0.05), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-                    blade.position.y = 1.1;
+                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.22, 2.5, 0.06), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+                    blade.position.y = 1.25;
+                    blade.userData = { key: 'wind' };
+
                     const pivot = new THREE.Group();
                     pivot.rotation.z = (i * Math.PI * 2) / 3;
+                    pivot.userData = { key: 'wind' };
                     pivot.add(blade);
                     bladeGroup.add(pivot);
                 }
@@ -613,27 +651,27 @@
                 turbineBlades.push(bladeGroup);
 
                 group.position.set(x, 0, z);
-                group.userData = { key: 'wind' };
                 scene.add(group);
                 clickableObjects.push(group);
             };
 
-            createTurbine(-11, -4);
-            createTurbine(11, -6);
+            createTurbine(-11, -5);
+            createTurbine(11, -5);
         }
 
         function createElectricBus() {
             const ebusGroup = new THREE.Group();
+            ebusGroup.userData = { key: 'ebus' };
             
             const busBody = new THREE.Mesh(
                 new THREE.BoxGeometry(2.8, 1.1, 1.2),
                 new THREE.MeshStandardMaterial({ color: 0x16a34a, metalness: 0.3 })
             );
             busBody.position.y = 0.55;
+            busBody.userData = { key: 'ebus' };
             ebusGroup.add(busBody);
 
             ebusGroup.position.set(7.5, 0.05, 2);
-            ebusGroup.userData = { key: 'ebus' };
             scene.add(ebusGroup);
             eBusMesh = ebusGroup;
             clickableObjects.push(ebusGroup);
@@ -642,15 +680,16 @@
         function createElectricSportsCars() {
             const createCar = (x, z, rotY, bodyColorHex) => {
                 const carGroup = new THREE.Group();
+                carGroup.userData = { key: 'evcars' };
                 const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColorHex, metalness: 0.7, roughness: 0.2 });
 
                 const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.45, 1.1), bodyMat);
                 chassis.position.y = 0.3;
+                chassis.userData = { key: 'evcars' };
                 carGroup.add(chassis);
 
                 carGroup.position.set(x, 0.03, z);
                 carGroup.rotation.y = rotY;
-                carGroup.userData = { key: 'evcars' };
                 scene.add(carGroup);
                 clickableObjects.push(carGroup);
             };
@@ -659,37 +698,19 @@
             createCar(-6, -3, Math.PI / 2, 0x2563eb);
         }
 
-        function createSmartInfrastructure() {
-            const lightPoleMat = new THREE.MeshStandardMaterial({ color: 0x64748b });
-            const lampMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, emissive: 0xfef08a, emissiveIntensity: 0.6 });
-
-            [{ x: 0, z: 9.5 }, { x: 0, z: -5.5 }, { x: -7.5, z: 2 }, { x: 7.5, z: 2 }].forEach(p => {
-                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 2.5), lightPoleMat);
-                pole.position.set(p.x, 1.25, p.z);
-                const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), lampMat);
-                lamp.position.set(p.x, 2.5, p.z);
-                scene.add(pole);
-                scene.add(lamp);
-            });
-        }
-
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
 
-        function handleCanvasInteraction(event) {
-            // Ensure audio is unlocked if user didn't hit the overlay
-            if (!audioUnlocked) {
-                startIntroSpeech();
-            }
+        function handleInteraction(event) {
+            unlockMobileAudio();
+
+            if (event.target.closest('header') || event.target.closest('.absolute') || event.target.closest('.dynamic-island')) return;
 
             const container = document.getElementById('webgl-canvas');
             const rect = container.getBoundingClientRect();
 
-            const clientX = event.clientX !== undefined ? event.clientX : (event.touches ? event.touches[0].clientX : 0);
-            const clientY = event.clientY !== undefined ? event.clientY : (event.touches ? event.touches[0].clientY : 0);
-
-            mouse.x = ((clientX - rect.left) / container.clientWidth) * 2 - 1;
-            mouse.y = -((clientY - rect.top) / container.clientHeight) * 2 + 1;
+            mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(clickableObjects, true);
@@ -706,6 +727,8 @@
         }
 
         function selectHotspot(key) {
+            unlockMobileAudio();
+
             const data = hotspotData[key];
             if (!data) return;
 
@@ -714,8 +737,9 @@
             document.getElementById('inspectDesc').innerText = data.desc;
 
             const card = document.getElementById('inspectorCard');
+            card.classList.remove('pulse-glow');
+            void card.offsetWidth;
             card.classList.add('pulse-glow');
-            setTimeout(() => card.classList.remove('pulse-glow'), 1200);
 
             speakText(data.speech);
         }
@@ -723,10 +747,10 @@
         function resetInspectView() {
             document.getElementById('inspectBadge').innerText = "Select Element";
             document.getElementById('inspectTitle').innerText = "Tap any object in 3D scene";
-            document.getElementById('inspectDesc').innerText = "Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap any model element or use the buttons above to hear descriptions.";
+            document.getElementById('inspectDesc').innerText = "Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap model elements to hear audio narration.";
             controls.target.set(0, 0, 0);
             camera.position.set(0, 24, 34);
-            if (synth) synth.cancel();
+            if (synth && synth.speaking) synth.cancel();
         }
 
         function toggleDayNight() {
@@ -734,13 +758,13 @@
             const btnIcon = document.getElementById('dayNightIcon');
             if (dayNightState) {
                 scene.background = new THREE.Color(0x0e1726);
-                ambientLight.intensity = 0.8;
-                dirLight.intensity = 1.25;
+                ambientLight.intensity = 0.75;
+                dirLight.intensity = 1.2;
                 btnIcon.className = "fa-solid fa-sun";
             } else {
                 scene.background = new THREE.Color(0x050811);
                 ambientLight.intensity = 0.3;
-                dirLight.intensity = 0.35;
+                dirLight.intensity = 0.4;
                 btnIcon.className = "fa-solid fa-moon text-indigo-300";
             }
         }
@@ -748,6 +772,7 @@
         let isAudioPlaying = false;
         function toggleAudioSpeech() {
             if (!synth) return;
+            unlockMobileAudio();
             if (isAudioPlaying) {
                 synth.cancel();
                 isAudioPlaying = false;
@@ -761,7 +786,6 @@
 
         function onWindowResize() {
             const container = document.getElementById('webgl-canvas');
-            if (!container) return;
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -774,7 +798,7 @@
             const elapsedTime = clock.getElapsedTime();
 
             if (trainMesh) {
-                const angle = elapsedTime * 0.42;
+                const angle = elapsedTime * 0.4;
                 trainMesh.position.x = Math.cos(angle) * 11;
                 trainMesh.position.z = 2 + Math.sin(angle) * 11;
                 trainMesh.rotation.y = -angle;
