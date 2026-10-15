@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATAT PUR - iPhone 16 Pro 3D Studio | ISWK Class 1 A</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SATAT PUR - Mobile 3D Studio | ISWK Class 1 A</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,88 +32,79 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #030712;
-            color: #ffffff;
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
             margin: 0;
             padding: 0;
+            overflow: hidden;
+            background-color: #030712;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
         }
 
-        /* iPhone 16 Pro Frame Mockup */
-        .iphone-16-pro-frame {
-            width: 100vw;
-            height: 100vh;
-            max-width: 402px;
-            max-height: 874px;
-            background-color: #090d16;
+        .iphone-container {
             position: relative;
+            width: min(393px, 92vw);
+            height: min(852px, 92dvh);
+            max-height: 95dvh;
+            background-color: #080d1a;
+            border-radius: 48px;
+            box-shadow: 0 0 0 4px #2b2724, 0 0 0 6px #4b4642, 0 20px 50px rgba(0, 0, 0, 0.9);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
-                        0 25px 60px -12px rgba(0, 0, 0, 0.95),
-                        0 0 40px rgba(59, 130, 246, 0.15);
         }
 
-        @media (min-width: 440px) {
-            .iphone-16-pro-frame {
-                border: 8px solid #38332e; /* Natural Titanium Bezel */
-                border-radius: 56px;
-                height: 90vh;
-                outline: 2px solid #1a1715;
-            }
-        }
-
-        /* Dynamic Island */
         .dynamic-island {
             position: absolute;
-            top: 11px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 35px;
+            width: 110px;
+            height: 30px;
             background-color: #000000;
             border-radius: 20px;
             z-index: 50;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            pointer-events: auto;
+            padding: 0 10px;
+            pointer-events: none;
         }
 
-        .camera-lens {
-            width: 12px;
-            height: 12px;
-            background-color: #0d1322;
+        .camera-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #0b1322;
             border-radius: 50%;
             border: 1px solid #1e293b;
         }
 
         .sensor-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background-color: #090e1a;
             border-radius: 50%;
         }
 
-        /* Home Bar Indicator */
-        .home-indicator {
+        .home-bar {
             position: absolute;
-            bottom: 8px;
+            bottom: 6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 134px;
-            height: 5px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 3px;
+            width: 120px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 2px;
             z-index: 50;
             pointer-events: none;
         }
@@ -129,14 +120,14 @@
         }
 
         .glass-card {
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-            width: 3px;
+            height: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.3);
@@ -147,107 +138,98 @@
         }
 
         .pulse-glow {
-            animation: pulse-glow-anim 1.5s infinite;
+            animation: pulse-glow-anim 1.2s ease-out;
         }
 
         @keyframes pulse-glow-anim {
-            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
-            70% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.8); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
             100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- iPhone 16 Pro Frame Wrapper -->
-    <div class="iphone-16-pro-frame" id="phoneContainer">
+    <div class="iphone-container" id="phoneContainer">
 
-        <!-- Dynamic Island Housing -->
         <div class="dynamic-island">
-            <div class="camera-lens"></div>
-            <div class="flex items-center space-x-1.5">
+            <div class="camera-dot"></div>
+            <div class="flex items-center space-x-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <div class="sensor-dot"></div>
             </div>
         </div>
 
-        <!-- Home Bar Indicator -->
-        <div class="home-indicator"></div>
+        <div class="home-bar"></div>
 
-        <!-- Initial Start Audio Banner Overlay -->
-        <div id="startAudioOverlay" onclick="startIntroSpeech()" class="absolute inset-0 z-40 bg-slate-950/75 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all">
-            <div class="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-green-500 rounded-2xl flex items-center justify-center text-white text-2xl mb-4 shadow-xl animate-bounce border border-emerald-400/30">
+        <div id="startAudioOverlay" class="absolute inset-0 z-40 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all">
+            <div class="w-14 h-14 bg-gradient-to-tr from-emerald-600 to-green-500 rounded-2xl flex items-center justify-center text-white text-xl mb-3 shadow-xl animate-bounce border border-emerald-400/30">
                 <i class="fa-solid fa-volume-high"></i>
             </div>
-            <h3 class="text-base font-bold text-white mb-1">Tap Anywhere to Start</h3>
-            <p class="text-xs text-slate-300 max-w-[260px]">Listen to the Indian English audio introduction by Class 1 A Eco-Kids</p>
+            <h3 class="text-sm font-bold text-white mb-1">Tap Screen to Enable Audio</h3>
+            <p class="text-[11px] text-slate-300 max-w-[240px]">Listen to Indian English audio narration by Class 1 A Eco-Kids</p>
         </div>
 
-        <!-- 3D Canvas -->
         <div id="webgl-canvas"></div>
 
-        <!-- Top Header Controls (Below Dynamic Island) -->
-        <header class="absolute top-14 left-3 right-3 z-20 flex justify-between items-center pointer-events-none gap-2">
-            <div class="glass-card px-3.5 py-2 rounded-2xl pointer-events-auto flex items-center space-x-2.5 shadow-lg border-l-4 border-emerald-500">
-                <div class="bg-gradient-to-br from-emerald-500 to-green-700 text-white p-2 rounded-xl shadow text-center">
-                    <i class="fa-solid fa-city text-sm"></i>
+        <header class="absolute top-11 left-2.5 right-2.5 z-20 flex justify-between items-center pointer-events-none gap-1.5">
+            <div class="glass-card px-2.5 py-1.5 rounded-xl pointer-events-auto flex items-center space-x-2 shadow-lg border-l-4 border-emerald-500">
+                <div class="bg-gradient-to-br from-emerald-500 to-green-700 text-white p-1.5 rounded-lg shadow text-center">
+                    <i class="fa-solid fa-city text-xs"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-xs tracking-tight text-white leading-tight">SATAT PUR</h1>
-                    <p class="text-[10px] text-amber-400 font-semibold">ISWK Class 1 A</p>
+                    <h1 class="font-bold text-[11px] tracking-tight text-white leading-tight">SATAT PUR</h1>
+                    <p class="text-[9px] text-amber-400 font-semibold">ISWK Class 1 A</p>
                 </div>
             </div>
 
-            <div class="glass-card px-2.5 py-1.5 rounded-2xl pointer-events-auto flex items-center space-x-2 shadow-lg">
-                <button onclick="toggleDayNight()" id="dayNightBtn" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs flex items-center justify-center transition border border-slate-700">
+            <div class="glass-card px-2 py-1 rounded-xl pointer-events-auto flex items-center space-x-1.5 shadow-lg">
+                <button onclick="toggleDayNight()" id="dayNightBtn" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs flex items-center justify-center transition border border-slate-700">
                     <i class="fa-solid fa-sun" id="dayNightIcon"></i>
                 </button>
-                <button onclick="toggleAudioSpeech()" id="audioBtn" class="w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center justify-center transition">
+                <button onclick="toggleAudioSpeech()" id="audioBtn" class="w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center justify-center transition">
                     <i class="fa-solid fa-volume-high" id="audioIcon"></i>
                 </button>
             </div>
         </header>
 
-        <!-- Floating Bottom Control Panel -->
-        <div class="absolute bottom-6 left-3 right-3 z-20 flex flex-col pointer-events-auto gap-2">
+        <div class="absolute bottom-4 left-2.5 right-2.5 z-20 flex flex-col pointer-events-auto gap-1.5">
             
-            <!-- Quick Feature Buttons -->
-            <div class="glass-card p-2 rounded-2xl flex items-center justify-between gap-1 shadow-2xl overflow-x-auto custom-scrollbar">
-                <button onclick="selectHotspot('maglev')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
+            <div class="glass-card p-1.5 rounded-xl flex items-center gap-1 shadow-2xl overflow-x-auto custom-scrollbar">
+                <button onclick="selectHotspot('maglev')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
                     <i class="fa-solid fa-train text-amber-400"></i> Maglev
                 </button>
-                <button onclick="selectHotspot('solar')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-solar-panel text-yellow-400"></i> Solar
-                </button>
-                <button onclick="selectHotspot('verticalgarden')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-leaf text-emerald-400"></i> Garden
-                </button>
-                <button onclick="selectHotspot('trees')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-tree text-green-400"></i> Trees
-                </button>
-                <button onclick="selectHotspot('ebus')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-bus-simple text-cyan-400"></i> E-Bus
-                </button>
-                <button onclick="selectHotspot('evcars')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-car-side text-red-400"></i> EV Cars
-                </button>
-                <button onclick="selectHotspot('wind')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
+                <button onclick="selectHotspot('wind')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
                     <i class="fa-solid fa-wind text-sky-400"></i> Windmills
                 </button>
-                <button onclick="selectHotspot('lake')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
+                <button onclick="selectHotspot('solar')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-solar-panel text-yellow-400"></i> Solar
+                </button>
+                <button onclick="selectHotspot('verticalgarden')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-leaf text-emerald-400"></i> Garden
+                </button>
+                <button onclick="selectHotspot('trees')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-tree text-green-400"></i> Trees
+                </button>
+                <button onclick="selectHotspot('ebus')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-bus-simple text-cyan-400"></i> E-Bus
+                </button>
+                <button onclick="selectHotspot('evcars')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
+                    <i class="fa-solid fa-car-side text-red-400"></i> EV Cars
+                </button>
+                <button onclick="selectHotspot('lake')" class="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1 transition">
                     <i class="fa-solid fa-water text-teal-400"></i> Lake
                 </button>
             </div>
 
-            <!-- Active Inspector Card -->
-            <div id="inspectorCard" class="glass-card p-3.5 rounded-2xl border border-emerald-500/40 shadow-2xl relative">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
-                    <span id="inspectBadge" class="text-[9px] font-bold uppercase px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">Select Element</span>
-                    <button onclick="resetInspectView()" class="text-[10px] text-slate-400 hover:text-white"><i class="fa-solid fa-rotate-right mr-1"></i>Reset</button>
+            <div id="inspectorCard" class="glass-card p-2.5 rounded-xl border border-emerald-500/40 shadow-2xl relative">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-1 mb-1">
+                    <span id="inspectBadge" class="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">Select Element</span>
+                    <button onclick="resetInspectView()" class="text-[9px] text-slate-400 hover:text-white"><i class="fa-solid fa-rotate-right mr-1"></i>Reset</button>
                 </div>
-                <h4 id="inspectTitle" class="text-xs font-bold text-white mb-0.5">Tap any object in 3D scene</h4>
-                <p id="inspectDesc" class="text-[11px] text-slate-300 leading-snug font-inter">
-                    Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap any model element or use the buttons above to hear descriptions.
+                <h4 id="inspectTitle" class="text-[11px] font-bold text-white mb-0.5">Tap any object in 3D scene</h4>
+                <p id="inspectDesc" class="text-[10px] text-slate-300 leading-tight font-inter">
+                    Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap model elements to hear audio narration.
                 </p>
             </div>
 
@@ -255,14 +237,13 @@
 
     </div>
 
-    <!-- 3D Engine Script -->
     <script>
         let scene, camera, renderer, controls;
         let trainMesh, eBusMesh, fountainParticles = [], turbineBlades = [];
         let clickableObjects = [];
         let dayNightState = true;
         let synth = window.speechSynthesis;
-        let hasIntroPlayed = false;
+        let audioUnlocked = false;
 
         const hotspotData = {
             maglev: {
@@ -270,6 +251,12 @@
                 badge: "Zero-Emission Rail",
                 desc: "Aerodynamic high-speed bullet train that glides smoothly on elevated green pillars above the road loop using magnetic levitation for zero-pollution public transit.",
                 speech: "This is the elevated Maglev bullet train. It glides smoothly on green support pillars above the road loop using magnetic levitation for zero-pollution public transit."
+            },
+            wind: {
+                title: "Eco Wind Turbines",
+                badge: "Renewable Power",
+                desc: "Converts natural wind breeze into clean electricity, complementing the solar grid for uninterrupted sustainable energy.",
+                speech: "These are eco wind turbines. They convert natural breeze into clean electricity for continuous sustainable power."
             },
             solar: {
                 title: "Rooftop Solar Panels",
@@ -301,12 +288,6 @@
                 desc: "Sleek aerodynamic electric sports cars with dual solar charging stations. They produce zero emissions to keep our city air clean and fresh.",
                 speech: "These are sleek electric sports cars parked near rapid solar charging stations, producing zero emissions to keep our city air clean."
             },
-            wind: {
-                title: "Eco Wind Turbines",
-                badge: "Renewable Power",
-                desc: "Converts natural wind breeze into clean electricity, complementing the solar grid for uninterrupted sustainable energy.",
-                speech: "These are eco wind turbines. They convert natural breeze into clean electricity for continuous sustainable power."
-            },
             lake: {
                 title: "Central Clean Lake & Fountain",
                 badge: "Water Conservation",
@@ -324,24 +305,33 @@
 
         function speakText(text) {
             if (!synth) return;
-            if (synth.speaking) synth.cancel();
+            try {
+                if (synth.speaking) synth.cancel();
 
-            const utterThis = new SpeechSynthesisUtterance(text);
-            utterThis.lang = 'en-IN';
-            utterThis.rate = 0.95;
+                const utterThis = new SpeechSynthesisUtterance(text);
+                utterThis.lang = 'en-IN';
+                utterThis.rate = 0.95;
 
-            const inVoice = getIndianVoice();
-            if (inVoice) utterThis.voice = inVoice;
+                const inVoice = getIndianVoice();
+                if (inVoice) utterThis.voice = inVoice;
 
-            synth.speak(utterThis);
+                synth.speak(utterThis);
+            } catch (e) {
+                console.log("Audio synthesis error:", e);
+            }
         }
 
-        function startIntroSpeech() {
-            const overlay = document.getElementById('startAudioOverlay');
-            if (overlay) overlay.style.display = 'none';
+        function unlockMobileAudio() {
+            if (!audioUnlocked) {
+                audioUnlocked = true;
+                const overlay = document.getElementById('startAudioOverlay');
+                if (overlay) overlay.style.display = 'none';
 
-            if (!hasIntroPlayed) {
-                hasIntroPlayed = true;
+                if (synth) {
+                    const silentUtter = new SpeechSynthesisUtterance('');
+                    synth.speak(silentUtter);
+                }
+
                 speakText("Welcome to Satat Pur, a smart and sustainable Indian city created by Class 1 A students Nour, Avyukth, Brahmani, and Syed Affan from Indian School Al Wadi Al Kabir.");
             }
         }
@@ -371,6 +361,10 @@
 
             setupLighting();
             buildBaseModel();
+
+            const phoneContainer = document.getElementById('phoneContainer');
+            phoneContainer.addEventListener('touchstart', unlockMobileAudio, { passive: true });
+            phoneContainer.addEventListener('click', unlockMobileAudio);
 
             window.addEventListener('resize', onWindowResize);
             window.addEventListener('click', onCanvasClick);
@@ -454,7 +448,6 @@
             scene.add(road);
         }
 
-        // Aerodynamic Maglev Bullet Train
         function createElevatedMaglevTrack(cx, cz) {
             const curve = new THREE.EllipseCurve(cx, cz, 11, 11, 0, 2 * Math.PI, false, 0);
             const points3D = curve.getPoints(64).map(p => new THREE.Vector3(p.x, 3.5, p.y));
@@ -512,7 +505,6 @@
             clickableObjects.push(trainGroup);
         }
 
-        // Eco Buildings with Rooftop Solar Panels
         function createEcoBuildingsWithSolar() {
             const solarMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, metalness: 0.9, roughness: 0.1 });
 
@@ -543,7 +535,6 @@
             clickableObjects.push(solar2);
         }
 
-        // Vertical Garden Wall with Colorful Flowers
         function createVerticalGardenWithFlowers() {
             const vgGroup = new THREE.Group();
             
@@ -582,7 +573,6 @@
             clickableObjects.push(vgGroup);
         }
 
-        // Green Trees across City
         function createGreenTrees() {
             const treePositions = [
                 { x: -10, z: 6 }, { x: -11, z: 2 }, { x: -9, z: 9 },
@@ -614,28 +604,37 @@
             });
         }
 
+        // Improved Windmill Creation with Group Raycasting Tagging
         function createWindmills() {
             const createTurbine = (x, z) => {
                 const group = new THREE.Group();
-                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.2, 6, 16), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-                pole.position.y = 3;
+                group.userData = { key: 'wind' };
+
+                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.3, 6.5, 16), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+                pole.position.y = 3.25;
+                pole.userData = { key: 'wind' };
                 group.add(pole);
 
                 const bladeGroup = new THREE.Group();
-                bladeGroup.position.set(0, 6, 0.25);
+                bladeGroup.position.set(0, 6.2, 0.3);
+                bladeGroup.userData = { key: 'wind' };
+
                 for (let i = 0; i < 3; i++) {
-                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.2, 0.05), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-                    blade.position.y = 1.1;
+                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.22, 2.5, 0.06), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+                    blade.position.y = 1.25;
+                    blade.userData = { key: 'wind' };
+
                     const pivot = new THREE.Group();
                     pivot.rotation.z = (i * Math.PI * 2) / 3;
+                    pivot.userData = { key: 'wind' };
                     pivot.add(blade);
+
                     bladeGroup.add(pivot);
                 }
                 group.add(bladeGroup);
                 turbineBlades.push(bladeGroup);
 
                 group.position.set(x, 0, z);
-                group.userData = { key: 'wind' };
                 scene.add(group);
                 clickableObjects.push(group);
             };
@@ -644,7 +643,6 @@
             createTurbine(11, -5);
         }
 
-        // Moving Electric Bus
         function createElectricBus() {
             const ebusGroup = new THREE.Group();
             
@@ -710,7 +708,7 @@
         const mouse = new THREE.Vector2();
 
         function onCanvasClick(event) {
-            startIntroSpeech();
+            unlockMobileAudio();
 
             if (event.target.closest('header') || event.target.closest('.absolute') || event.target.closest('.dynamic-island')) return;
 
@@ -735,7 +733,7 @@
         }
 
         function selectHotspot(key) {
-            startIntroSpeech();
+            unlockMobileAudio();
 
             const data = hotspotData[key];
             if (!data) return;
@@ -745,8 +743,9 @@
             document.getElementById('inspectDesc').innerText = data.desc;
 
             const card = document.getElementById('inspectorCard');
+            card.classList.remove('pulse-glow');
+            void card.offsetWidth;
             card.classList.add('pulse-glow');
-            setTimeout(() => card.classList.remove('pulse-glow'), 1500);
 
             speakText(data.speech);
         }
@@ -754,7 +753,7 @@
         function resetInspectView() {
             document.getElementById('inspectBadge').innerText = "Select Element";
             document.getElementById('inspectTitle').innerText = "Tap any object in 3D scene";
-            document.getElementById('inspectDesc').innerText = "Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap any model element or use the buttons above to hear descriptions.";
+            document.getElementById('inspectDesc').innerText = "Project team: Nour, Avyukth, Brahmani, and Syed Affan. Tap model elements to hear audio narration.";
             controls.target.set(0, 0, 0);
             camera.position.set(0, 24, 34);
             if (synth && synth.speaking) synth.cancel();
@@ -779,6 +778,7 @@
         let isAudioPlaying = false;
         function toggleAudioSpeech() {
             if (!synth) return;
+            unlockMobileAudio();
             if (isAudioPlaying) {
                 synth.cancel();
                 isAudioPlaying = false;
