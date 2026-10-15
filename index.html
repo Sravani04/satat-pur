@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATAT PUR - Mobile 3D Studio | ISWK Class 1 A</title>
+    <title>SATAT PUR - iPhone 16 Pro 3D Studio | ISWK Class 1 A</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,25 +45,77 @@
             overflow: hidden;
         }
 
-        .phone-frame {
+        /* iPhone 16 Pro Frame Mockup */
+        .iphone-16-pro-frame {
             width: 100vw;
             height: 100vh;
-            max-width: 430px;
-            max-height: 900px;
+            max-width: 402px;
+            max-height: 874px;
             background-color: #090d16;
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+                        0 25px 60px -12px rgba(0, 0, 0, 0.95),
+                        0 0 40px rgba(59, 130, 246, 0.15);
         }
 
-        @media (min-width: 480px) {
-            .phone-frame {
-                border: 12px solid #1e293b;
-                border-radius: 48px;
-                height: 88vh;
+        @media (min-width: 440px) {
+            .iphone-16-pro-frame {
+                border: 8px solid #38332e; /* Natural Titanium Bezel */
+                border-radius: 56px;
+                height: 90vh;
+                outline: 2px solid #1a1715;
             }
+        }
+
+        /* Dynamic Island */
+        .dynamic-island {
+            position: absolute;
+            top: 11px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background-color: #000000;
+            border-radius: 20px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            pointer-events: auto;
+        }
+
+        .camera-lens {
+            width: 12px;
+            height: 12px;
+            background-color: #0d1322;
+            border-radius: 50%;
+            border: 1px solid #1e293b;
+        }
+
+        .sensor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #090e1a;
+            border-radius: 50%;
+        }
+
+        /* Home Bar Indicator */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 3px;
+            z-index: 50;
+            pointer-events: none;
         }
 
         #webgl-canvas {
@@ -78,52 +130,64 @@
 
         .glass-card {
             background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-            height: 4px;
+            width: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.3);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #10b981;
+            background: #2e7d32;
             border-radius: 4px;
         }
 
         .pulse-glow {
-            animation: pulse-glow-anim 1.2s ease-out;
+            animation: pulse-glow-anim 1.5s infinite;
         }
 
         @keyframes pulse-glow-anim {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+            70% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Smartphone Wrapper -->
-    <div class="phone-frame" id="phoneContainer">
+    <!-- iPhone 16 Pro Frame Wrapper -->
+    <div class="iphone-16-pro-frame" id="phoneContainer">
+
+        <!-- Dynamic Island Housing -->
+        <div class="dynamic-island">
+            <div class="camera-lens"></div>
+            <div class="flex items-center space-x-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="sensor-dot"></div>
+            </div>
+        </div>
+
+        <!-- Home Bar Indicator -->
+        <div class="home-indicator"></div>
 
         <!-- Initial Start Audio Banner Overlay -->
-        <div id="startAudioOverlay" onclick="startIntroSpeech()" class="absolute inset-0 z-30 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all">
-            <div class="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl mb-4 shadow-xl animate-bounce">
+        <div id="startAudioOverlay" onclick="startIntroSpeech()" class="absolute inset-0 z-40 bg-slate-950/75 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all">
+            <div class="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-green-500 rounded-2xl flex items-center justify-center text-white text-2xl mb-4 shadow-xl animate-bounce border border-emerald-400/30">
                 <i class="fa-solid fa-volume-high"></i>
             </div>
             <h3 class="text-base font-bold text-white mb-1">Tap Anywhere to Start</h3>
             <p class="text-xs text-slate-300 max-w-[260px]">Listen to the Indian English audio introduction by Class 1 A Eco-Kids</p>
         </div>
 
-        <!-- 3D WebGL Canvas -->
+        <!-- 3D Canvas -->
         <div id="webgl-canvas"></div>
 
-        <!-- Top Mobile Header -->
-        <header class="absolute top-3 left-3 right-3 z-20 flex justify-between items-center pointer-events-none gap-2">
+        <!-- Top Header Controls (Below Dynamic Island) -->
+        <header class="absolute top-14 left-3 right-3 z-20 flex justify-between items-center pointer-events-none gap-2">
             <div class="glass-card px-3.5 py-2 rounded-2xl pointer-events-auto flex items-center space-x-2.5 shadow-lg border-l-4 border-emerald-500">
                 <div class="bg-gradient-to-br from-emerald-500 to-green-700 text-white p-2 rounded-xl shadow text-center">
                     <i class="fa-solid fa-city text-sm"></i>
@@ -145,24 +209,24 @@
         </header>
 
         <!-- Floating Bottom Control Panel -->
-        <div class="absolute bottom-3 left-3 right-3 z-20 flex flex-col pointer-events-auto gap-2">
+        <div class="absolute bottom-6 left-3 right-3 z-20 flex flex-col pointer-events-auto gap-2">
             
             <!-- Quick Feature Buttons -->
-            <div class="glass-card p-2 rounded-2xl flex items-center gap-1.5 shadow-2xl overflow-x-auto custom-scrollbar">
+            <div class="glass-card p-2 rounded-2xl flex items-center justify-between gap-1 shadow-2xl overflow-x-auto custom-scrollbar">
                 <button onclick="selectHotspot('maglev')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-train text-amber-400"></i> Maglev
                 </button>
+                <button onclick="selectHotspot('solar')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-solar-panel text-yellow-400"></i> Solar
+                </button>
                 <button onclick="selectHotspot('verticalgarden')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-seedling text-pink-400"></i> Garden & Flowers
+                    <i class="fa-solid fa-leaf text-emerald-400"></i> Garden
                 </button>
                 <button onclick="selectHotspot('trees')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-tree text-emerald-400"></i> Green Canopy
-                </button>
-                <button onclick="selectHotspot('solar')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-solar-panel text-yellow-400"></i> Solar Panels
+                    <i class="fa-solid fa-tree text-green-400"></i> Trees
                 </button>
                 <button onclick="selectHotspot('ebus')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-bus-simple text-green-400"></i> E-Bus
+                    <i class="fa-solid fa-bus-simple text-cyan-400"></i> E-Bus
                 </button>
                 <button onclick="selectHotspot('evcars')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-car-side text-red-400"></i> EV Cars
@@ -171,7 +235,7 @@
                     <i class="fa-solid fa-wind text-sky-400"></i> Windmills
                 </button>
                 <button onclick="selectHotspot('lake')" class="flex-shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800/95 hover:bg-emerald-900 border border-slate-700 text-[10px] font-medium text-white flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-water text-cyan-400"></i> Lake
+                    <i class="fa-solid fa-water text-teal-400"></i> Lake
                 </button>
             </div>
 
@@ -204,37 +268,37 @@
             maglev: {
                 title: "Elevated Bullet Maglev Train",
                 badge: "Zero-Emission Rail",
-                desc: "Aerodynamic high-speed bullet train gliding smoothly on elevated green pillars above the road loop using magnetic levitation for zero-pollution public transit.",
+                desc: "Aerodynamic high-speed bullet train that glides smoothly on elevated green pillars above the road loop using magnetic levitation for zero-pollution public transit.",
                 speech: "This is the elevated Maglev bullet train. It glides smoothly on green support pillars above the road loop using magnetic levitation for zero-pollution public transit."
             },
-            verticalgarden: {
-                title: "Vertical Garden & Floral Wall",
-                badge: "Urban Greening",
-                desc: "Lush vertical planter wall embedded with vibrant colorful blooming flowers and foliage that purify air, dampen urban noise, and cool building facades.",
-                speech: "This is the vertical garden wall. It features vibrant colorful blooming flowers and lush greenery that purify city air and reduce urban heat."
-            },
-            trees: {
-                title: "Lush Green Urban Canopy",
-                badge: "Eco Forest Grid",
-                desc: "Dense pine and broadleaf shade trees planted along streets, lakefronts, and plazas to absorb carbon emissions and provide fresh oxygen.",
-                speech: "These are green canopy trees scattered across the landscape. They capture carbon dioxide, provide shade, and create a healthy ecosystem."
-            },
             solar: {
-                title: "Rooftop Photovoltaic Solar Panels",
+                title: "Rooftop Solar Panels",
                 badge: "Clean Energy",
-                desc: "High-efficiency rooftop solar arrays harvesting abundant solar radiation to supply clean power to streetlights, EV chargers, and buildings.",
+                desc: "High-efficiency photovoltaic solar panels installed on building rooftops to harvest sunlight and power city infrastructure sustainably.",
                 speech: "These are rooftop solar panels. They harvest sunlight to generate clean electricity for the entire city."
             },
+            verticalgarden: {
+                title: "Vertical Garden Wall & Flowers",
+                badge: "Urban Greening",
+                desc: "Lush vertical greenery planted along building facades featuring bright red, yellow, pink, and orange flower clusters to purify city air and enhance urban biodiversity.",
+                speech: "This is the vertical garden wall. Lush foliage planted with colorful flower blooms purifies city air and improves biodiversity."
+            },
+            trees: {
+                title: "Urban Green Trees",
+                badge: "Eco Canopy",
+                desc: "Dense green leafy canopy trees planted across city avenues, absorbing carbon emissions and providing cool shaded areas for citizens.",
+                speech: "These are green leafy trees planted across avenues to absorb carbon dioxide and cool down the city environment."
+            },
             ebus: {
-                title: "Zero-Emission Electric Bus",
+                title: "Moving Zero-Emission Electric Bus",
                 badge: "Eco Public Transport",
-                desc: "Powered entirely by battery packs with dynamic induction charging stops along the route, driving continuously around the city loop.",
+                desc: "Powered entirely by quiet solar battery packs with wireless dynamic inductive charging stops along the route, driving continuously around the city loop.",
                 speech: "This is the moving zero-emission electric bus. It runs quietly on solar battery power along the city road loop to reduce air pollution."
             },
             evcars: {
-                title: "Electric Sports Cars & Solar Charging Hub",
+                title: "Electric Sports Cars & Charging Hub",
                 badge: "Clean Mobility",
-                desc: "Aerodynamic electric sports cars linked to fast-charging solar ports, promoting eco-friendly private transit without tailpipe exhaust.",
+                desc: "Sleek aerodynamic electric sports cars with dual solar charging stations. They produce zero emissions to keep our city air clean and fresh.",
                 speech: "These are sleek electric sports cars parked near rapid solar charging stations, producing zero emissions to keep our city air clean."
             },
             wind: {
@@ -321,17 +385,16 @@
         let ambientLight, dirLight;
 
         function setupLighting() {
-            ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
             scene.add(ambientLight);
 
-            dirLight = new THREE.DirectionalLight(0xfff8e7, 1.25);
+            dirLight = new THREE.DirectionalLight(0xfff8e7, 1.2);
             dirLight.position.set(20, 35, 15);
             dirLight.castShadow = true;
             scene.add(dirLight);
         }
 
         function buildBaseModel() {
-            // Main landscape base
             const baseMesh = new THREE.Mesh(
                 new THREE.BoxGeometry(34, 1, 26),
                 new THREE.MeshStandardMaterial({ color: 0x1b5e20, roughness: 0.6 })
@@ -339,7 +402,6 @@
             baseMesh.position.y = -0.5;
             scene.add(baseMesh);
 
-            // Backdrop Board
             const board = new THREE.Mesh(
                 new THREE.BoxGeometry(34, 14, 0.8),
                 new THREE.MeshStandardMaterial({ color: 0x0288d1, roughness: 0.4 })
@@ -347,7 +409,6 @@
             board.position.set(0, 7, -12.5);
             scene.add(board);
 
-            // Central Lake
             const lake = new THREE.Mesh(
                 new THREE.CylinderGeometry(4.5, 4.5, 0.1, 32),
                 new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.1, metalness: 0.8 })
@@ -362,24 +423,23 @@
             createElevatedMaglevTrack(0, 2);
             createEcoBuildingsWithSolar();
             createVerticalGardenWithFlowers();
-            createLandscapeTrees();
+            createGreenTrees();
             createWindmills();
             createElectricBus();
             createElectricSportsCars();
-            createSmartInfrastructure();
         }
 
         function createFountain(x, y, z) {
-            const count = 35;
+            const count = 30;
             const geo = new THREE.BufferGeometry();
             const positions = new Float32Array(count * 3);
             for (let i = 0; i < count; i++) {
                 positions[i * 3] = x + (Math.random() - 0.5) * 0.4;
-                positions[i * 3 + 1] = y + 1 + Math.random() * 1.6;
+                positions[i * 3 + 1] = y + 1 + Math.random() * 1.5;
                 positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.4;
             }
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const pSystem = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xe0f7fa, size: 0.28, transparent: true, opacity: 0.85 }));
+            const pSystem = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xe0f7fa, size: 0.25, transparent: true, opacity: 0.8 }));
             scene.add(pSystem);
             fountainParticles.push(pSystem);
         }
@@ -394,6 +454,7 @@
             scene.add(road);
         }
 
+        // Aerodynamic Maglev Bullet Train
         function createElevatedMaglevTrack(cx, cz) {
             const curve = new THREE.EllipseCurve(cx, cz, 11, 11, 0, 2 * Math.PI, false, 0);
             const points3D = curve.getPoints(64).map(p => new THREE.Vector3(p.x, 3.5, p.y));
@@ -451,10 +512,10 @@
             clickableObjects.push(trainGroup);
         }
 
+        // Eco Buildings with Rooftop Solar Panels
         function createEcoBuildingsWithSolar() {
             const solarMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, metalness: 0.9, roughness: 0.1 });
 
-            // Building 1
             const b1 = new THREE.Mesh(
                 new THREE.BoxGeometry(5, 7, 4),
                 new THREE.MeshStandardMaterial({ color: 0x4e342e })
@@ -468,7 +529,6 @@
             scene.add(solar1);
             clickableObjects.push(solar1);
 
-            // Building 2
             const b2 = new THREE.Mesh(
                 new THREE.BoxGeometry(5.5, 9, 4.5),
                 new THREE.MeshStandardMaterial({ color: 0xfbc02d })
@@ -483,45 +543,37 @@
             clickableObjects.push(solar2);
         }
 
-        // Vertical Garden Wall Embedded with Colorful Miniature Flowers
+        // Vertical Garden Wall with Colorful Flowers
         function createVerticalGardenWithFlowers() {
             const vgGroup = new THREE.Group();
             
-            // Outer Frame
             const frame = new THREE.Mesh(
-                new THREE.BoxGeometry(4.2, 5.2, 0.4),
+                new THREE.BoxGeometry(3.5, 4.5, 0.4),
                 new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 })
             );
-            frame.position.y = 2.6;
+            frame.position.y = 2.25;
             vgGroup.add(frame);
 
-            // Foliage Base
             const foliage = new THREE.Mesh(
-                new THREE.BoxGeometry(3.9, 4.9, 0.45),
+                new THREE.BoxGeometry(3.3, 4.3, 0.45),
                 new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 })
             );
-            foliage.position.y = 2.6;
+            foliage.position.y = 2.25;
             vgGroup.add(foliage);
 
-            // Miniature Flower Clusters inside planter slots
-            const flowerColors = [0xef4444, 0xf59e0b, 0xec4899, 0x3b82f6, 0xa855f7, 0xfacc15];
-            for (let r = 0; r < 6; r++) {
-                for (let c = 0; c < 5; c++) {
-                    const fx = -1.4 + c * 0.7;
-                    const fy = 0.8 + r * 0.75;
-                    const color = flowerColors[(r + c) % flowerColors.length];
-                    const flMat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.3 });
-
-                    // Flower bloom dot
-                    const bloom = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), flMat);
-                    bloom.position.set(fx + (Math.random() - 0.5) * 0.1, fy, 0.26);
-                    vgGroup.add(bloom);
-
-                    // Leaf petal accent
-                    const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 6), new THREE.MeshStandardMaterial({ color: 0x22c55e }));
-                    leaf.position.set(fx + 0.1, fy - 0.08, 0.25);
-                    vgGroup.add(leaf);
-                }
+            const flowerColors = [0xef4444, 0xec4899, 0xeab308, 0xf97316];
+            for (let i = 0; i < 24; i++) {
+                const color = flowerColors[i % flowerColors.length];
+                const flower = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.12 + Math.random() * 0.08, 8, 8),
+                    new THREE.MeshStandardMaterial({ color: color, roughness: 0.3 })
+                );
+                flower.position.set(
+                    (Math.random() - 0.5) * 2.8,
+                    0.5 + Math.random() * 3.5,
+                    0.25
+                );
+                vgGroup.add(flower);
             }
 
             vgGroup.position.set(9.5, 0, -4);
@@ -530,62 +582,36 @@
             clickableObjects.push(vgGroup);
         }
 
-        // Landscape Green Trees (Pine Cone Trees & Leafy Canopy Trees)
-        function createLandscapeTrees() {
-            const treeGroupMaster = new THREE.Group();
-
-            const createSingleTree = (x, z, scale = 1, type = 'canopy') => {
-                const tGroup = new THREE.Group();
-                const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.9 });
-                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18 * scale, 0.26 * scale, 1.8 * scale, 8), trunkMat);
-                trunk.position.y = (0.9 * scale);
-                tGroup.add(trunk);
-
-                if (type === 'canopy') {
-                    const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.6 });
-                    const top1 = new THREE.Mesh(new THREE.SphereGeometry(0.85 * scale, 8, 8), leafMat);
-                    top1.position.y = (2.1 * scale);
-                    tGroup.add(top1);
-
-                    const top2 = new THREE.Mesh(new THREE.SphereGeometry(0.65 * scale, 8, 8), leafMat);
-                    top2.position.set(0.2 * scale, 2.5 * scale, 0.1 * scale);
-                    tGroup.add(top2);
-                } else { // Pine Tree
-                    const pineMat = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.7 });
-                    const c1 = new THREE.Mesh(new THREE.ConeGeometry(0.9 * scale, 1.5 * scale, 8), pineMat);
-                    c1.position.y = (1.8 * scale);
-                    tGroup.add(c1);
-
-                    const c2 = new THREE.Mesh(new THREE.ConeGeometry(0.7 * scale, 1.3 * scale, 8), pineMat);
-                    c2.position.y = (2.5 * scale);
-                    tGroup.add(c2);
-                }
-
-                tGroup.position.set(x, 0, z);
-                tGroup.userData = { key: 'trees' };
-                treeGroupMaster.add(tGroup);
-                clickableObjects.push(tGroup);
-            };
-
-            // Perimeter & Park Tree Coordinates
-            const treeCoords = [
-                { x: -13, z: -8, s: 1.1, t: 'canopy' },
-                { x: -11, z: -10, s: 0.9, t: 'pine' },
-                { x: -14, z: 2, s: 1.2, t: 'canopy' },
-                { x: -12, z: 6, s: 1.0, t: 'pine' },
-                { x: -10, z: 9, s: 1.1, t: 'canopy' },
-                { x: -4, z: 10, s: 1.0, t: 'canopy' },
-                { x: 4, z: 10, s: 0.95, t: 'pine' },
-                { x: 11, z: 8, s: 1.15, t: 'canopy' },
-                { x: 13, z: 2, s: 1.0, t: 'pine' },
-                { x: 13, z: -8, s: 1.2, t: 'canopy' },
-                { x: 6, z: -10, s: 0.9, t: 'pine' },
-                { x: -5, z: 2, s: 0.8, t: 'canopy' },
-                { x: 5, z: -1, s: 0.85, t: 'pine' }
+        // Green Trees across City
+        function createGreenTrees() {
+            const treePositions = [
+                { x: -10, z: 6 }, { x: -11, z: 2 }, { x: -9, z: 9 },
+                { x: 10, z: 6 }, { x: 11, z: 1 }, { x: 9, z: 9 },
+                { x: -3, z: 8 }, { x: 3, z: 8 }, { x: 0, z: -3 }
             ];
 
-            treeCoords.forEach(tc => createSingleTree(tc.x, tc.z, tc.s, tc.t));
-            scene.add(treeGroupMaster);
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
+            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x1e8449, roughness: 0.6 });
+
+            treePositions.forEach(pos => {
+                const treeGroup = new THREE.Group();
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.25, 1.8, 12), trunkMat);
+                trunk.position.y = 0.9;
+                treeGroup.add(trunk);
+
+                const leaves1 = new THREE.Mesh(new THREE.ConeGeometry(1.2, 2.2, 12), leavesMat);
+                leaves1.position.y = 2.4;
+                treeGroup.add(leaves1);
+
+                const leaves2 = new THREE.Mesh(new THREE.ConeGeometry(0.9, 1.8, 12), leavesMat);
+                leaves2.position.y = 3.2;
+                treeGroup.add(leaves2);
+
+                treeGroup.position.set(pos.x, 0, pos.z);
+                treeGroup.userData = { key: 'trees' };
+                scene.add(treeGroup);
+                clickableObjects.push(treeGroup);
+            });
         }
 
         function createWindmills() {
@@ -614,10 +640,11 @@
                 clickableObjects.push(group);
             };
 
-            createTurbine(-11, -4);
-            createTurbine(11, -6);
+            createTurbine(-11, -5);
+            createTurbine(11, -5);
         }
 
+        // Moving Electric Bus
         function createElectricBus() {
             const ebusGroup = new THREE.Group();
             
@@ -679,33 +706,13 @@
             createCar(-6, -3, Math.PI / 2, 0x2563eb);
         }
 
-        function createSmartInfrastructure() {
-            // Streetlights
-            const lightPoleMat = new THREE.MeshStandardMaterial({ color: 0x64748b });
-            const lampMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, emissive: 0xfef08a, emissiveIntensity: 0.6 });
-
-            [
-                { x: 0, z: 9.5 },
-                { x: 0, z: -5.5 },
-                { x: -7.5, z: 2 },
-                { x: 7.5, z: 2 }
-            ].forEach(p => {
-                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 2.5), lightPoleMat);
-                pole.position.set(p.x, 1.25, p.z);
-                const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), lampMat);
-                lamp.position.set(p.x, 2.5, p.z);
-                scene.add(pole);
-                scene.add(lamp);
-            });
-        }
-
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
 
         function onCanvasClick(event) {
             startIntroSpeech();
 
-            if (event.target.closest('header') || event.target.closest('.absolute')) return;
+            if (event.target.closest('header') || event.target.closest('.absolute') || event.target.closest('.dynamic-island')) return;
 
             const container = document.getElementById('webgl-canvas');
             const rect = container.getBoundingClientRect();
@@ -739,7 +746,7 @@
 
             const card = document.getElementById('inspectorCard');
             card.classList.add('pulse-glow');
-            setTimeout(() => card.classList.remove('pulse-glow'), 1200);
+            setTimeout(() => card.classList.remove('pulse-glow'), 1500);
 
             speakText(data.speech);
         }
@@ -758,13 +765,13 @@
             const btnIcon = document.getElementById('dayNightIcon');
             if (dayNightState) {
                 scene.background = new THREE.Color(0x0e1726);
-                ambientLight.intensity = 0.8;
-                dirLight.intensity = 1.25;
+                ambientLight.intensity = 0.75;
+                dirLight.intensity = 1.2;
                 btnIcon.className = "fa-solid fa-sun";
             } else {
                 scene.background = new THREE.Color(0x050811);
                 ambientLight.intensity = 0.3;
-                dirLight.intensity = 0.35;
+                dirLight.intensity = 0.4;
                 btnIcon.className = "fa-solid fa-moon text-indigo-300";
             }
         }
@@ -796,15 +803,13 @@
             const delta = clock.getDelta();
             const elapsedTime = clock.getElapsedTime();
 
-            // Rotate Maglev Train
             if (trainMesh) {
-                const angle = elapsedTime * 0.42;
+                const angle = elapsedTime * 0.4;
                 trainMesh.position.x = Math.cos(angle) * 11;
                 trainMesh.position.z = 2 + Math.sin(angle) * 11;
                 trainMesh.rotation.y = -angle;
             }
 
-            // Move Electric Bus along road loop
             if (eBusMesh) {
                 const busAngle = -elapsedTime * 0.3 + Math.PI;
                 const busRadius = 7.5;
@@ -813,7 +818,6 @@
                 eBusMesh.rotation.y = -busAngle - Math.PI / 2;
             }
 
-            // Spin Windmill Blades
             turbineBlades.forEach(blade => {
                 blade.rotation.z -= delta * 2.5;
             });
