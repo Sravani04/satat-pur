@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATAT PUR - Smart & Sustainable City | ISWK Class 1 A</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            green: '#2e7d32',
+                            lightGreen: '#4caf50',
+                            bgGreen: '#f1f8e9',
+                            blue: '#0288d1',
+                            accent: '#fbc02d',
+                            dark: '#0a192f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0b132b;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #webgl-canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-card-light {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            color: #1e293b;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2e7d32;
+            border-radius: 4px;
+        }
+
+        .pulse-glow {
+            animation: pulse-glow-anim 2s infinite;
+        }
+
+        @keyframes pulse-glow-anim {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        .hotspot-label {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden select-none">
+
+    <!-- 3D Canvas -->
+    <div id="webgl-canvas"></div>
+
+    <!-- Top Header Banner -->
+    <header class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row justify-between items-center pointer-events-none gap-3">
+        <div class="glass-card px-5 py-3 rounded-2xl pointer-events-auto flex items-center space-x-4 shadow-2xl border-l-4 border-emerald-500">
+            <div class="bg-gradient-to-br from-emerald-500 to-green-700 text-white p-3 rounded-xl shadow-lg text-center">
+                <i class="fa-solid fa-city text-2xl"></i>
+            </div>
+            <div>
+                <div class="flex items-center space-x-2">
+                    <h1 class="font-bold text-lg md:text-xl tracking-tight text-white">SATAT PUR</h1>
+                    <span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-0.5 rounded-full border border-emerald-500/40 font-semibold">STAI Project</span>
+                </div>
+                <p class="text-xs text-slate-300 font-inter">A Cleaner, Greener, Happier Indian City • <span class="text-amber-400 font-semibold">ISWK Class 1 A</span></p>
+            </div>
+        </div>
+
+        <div class="glass-card px-4 py-2 rounded-2xl pointer-events-auto flex items-center space-x-3 shadow-xl">
+            <button onclick="toggleAudioSpeech()" id="audioBtn" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-volume-high" id="audioIcon"></i>
+                <span id="audioText">Audio Guide</span>
+            </button>
+            <button onclick="toggleDayNight()" id="dayNightBtn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-medium flex items-center gap-1.5 transition border border-slate-700">
+                <i class="fa-solid fa-sun" id="dayNightIcon"></i>
+                <span id="dayNightText">Day View</span>
+            </button>
+            <button onclick="openTakeAwayModal()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg transition">
+                <i class="fa-solid fa-address-card"></i>
+                <span>Take-Away Card</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Left Interactive Panel -->
+    <aside class="absolute left-4 top-24 bottom-6 w-80 md:w-96 glass-card rounded-3xl p-5 z-20 flex flex-col justify-between pointer-events-auto shadow-2xl border border-slate-700/60 custom-scrollbar overflow-y-auto">
+        <div class="space-y-5">
+            
+            <!-- Vision Banner -->
+            <div class="bg-gradient-to-r from-emerald-900/60 to-slate-900/80 p-4 rounded-2xl border border-emerald-500/30">
+                <div class="flex items-center space-x-2 text-emerald-400 mb-1.5">
+                    <i class="fa-solid fa-bullseye text-sm"></i>
+                    <h2 class="text-xs font-bold tracking-wider uppercase">Our Project Vision</h2>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed font-inter">
+                    "To create a clean, green and healthy Indian city using smart technology for a better sustainable future."
+                </p>
+            </div>
+
+            <!-- Interactive Hotspots Quick Filter -->
+            <div>
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+                    <span><i class="fa-solid fa-location-dot text-emerald-400 mr-1.5"></i> Model Key Features</span>
+                    <span class="text-[10px] text-slate-500">Click to Inspect</span>
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="selectHotspot('ebus')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-bus-simple text-emerald-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">Electric Buses</div>
+                            <div class="text-[10px] text-slate-400">Zero-Emission Transit</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('evcars')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-car-side text-green-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">EV Cars & Hub</div>
+                            <div class="text-[10px] text-slate-400">Fast Charging</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('smartsignals')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-traffic-light text-amber-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">AI Traffic Signals</div>
+                            <div class="text-[10px] text-slate-400">Smart Grid Flow</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('lake')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-water text-cyan-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">Clean Lake</div>
+                            <div class="text-[10px] text-slate-400">Rainwater Fountain</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('maglev')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-train text-amber-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">Maglev Train</div>
+                            <div class="text-[10px] text-slate-400">Elevated Rail</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('solar')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-solar-panel text-yellow-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">Solar Buildings</div>
+                            <div class="text-[10px] text-slate-400">Clean Power</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('wind')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-wind text-sky-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">Wind Turbines</div>
+                            <div class="text-[10px] text-slate-400">Green Breeze</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectHotspot('waste')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-950/60 border border-slate-700/80 hover:border-emerald-500/50 text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-trash-can text-red-400 text-sm w-4"></i>
+                        <div>
+                            <div class="font-semibold text-white">3-Bin Waste</div>
+                            <div class="text-[10px] text-slate-400">Segregation</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Details Inspector -->
+            <div id="inspectorCard" class="bg-slate-900/90 p-4 rounded-2xl border border-emerald-500/40 relative">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                    <span id="inspectBadge" class="text-[10px] font-bold uppercase px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-md border border-emerald-500/30">Select Element</span>
+                    <button onclick="resetInspectView()" class="text-[10px] text-slate-400 hover:text-white"><i class="fa-solid fa-rotate-right mr-1"></i>Reset View</button>
+                </div>
+                <h4 id="inspectTitle" class="text-sm font-bold text-white mb-1">Click any object in 3D scene</h4>
+                <p id="inspectDesc" class="text-xs text-slate-300 leading-relaxed font-inter">
+                    Explore the Satat Pur physical exhibition replica created by Class 1 A students. Click on any model element or use the quick buttons above.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+            <span><i class="fa-solid fa-mouse text-emerald-400 mr-1"></i> Left Click: Orbit</span>
+            <span><i class="fa-solid fa-arrows-up-down-left-right text-emerald-400 mr-1"></i> Right Click: Pan</span>
+        </div>
+    </aside>
+
+    <!-- Take-Away Card Modal (Physical Exhibition Style) -->
+    <div id="takeAwayModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-card-light max-w-xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl border-2 border-emerald-600 animate-fade-in max-h-[90vh] overflow-y-auto custom-scrollbar">
+            
+            <button onclick="closeTakeAwayModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Card Header -->
+            <div class="flex items-center space-x-3 mb-4 pb-4 border-b border-emerald-200">
+                <div class="bg-emerald-700 text-white p-3 rounded-2xl shadow-md">
+                    <i class="fa-solid fa-seedling text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">ISWK STAI Exhibition • Class 1 A</span>
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">SATAT PUR project card</h2>
+                    <p class="text-xs text-emerald-700 font-semibold">The Eco-Kids Team Presentation</p>
+                </div>
+            </div>
+
+            <!-- Vision Box -->
+            <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl mb-4">
+                <h4 class="text-xs font-bold uppercase text-emerald-800 mb-1 flex items-center">
+                    <i class="fa-solid fa-quote-left mr-1.5 text-emerald-600"></i> Project Vision
+                </h4>
+                <p class="text-xs text-slate-700 font-inter italic">
+                    "To create a clean, green and healthy Indian city using smart technology for a better future."
+                </p>
+            </div>
+
+            <!-- Team Members -->
+            <div class="mb-5">
+                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Student Innovators (The Eco-Kids)</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2 rounded-xl bg-slate-100 border border-slate-200 flex items-center space-x-2 font-medium text-slate-800">
+                        <i class="fa-solid fa-user-gear text-emerald-600"></i> <span>Avyukth</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-100 border border-slate-200 flex items-center space-x-2 font-medium text-slate-800">
+                        <i class="fa-solid fa-user-pen text-emerald-600"></i> <span>Nour</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-100 border border-slate-200 flex items-center space-x-2 font-medium text-slate-800">
+                        <i class="fa-solid fa-user-astronaut text-emerald-600"></i> <span>Syed Affan</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-100 border border-slate-200 flex items-center space-x-2 font-medium text-slate-800">
+                        <i class="fa-solid fa-user-check text-emerald-600"></i> <span>Brahmani</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Bullet points -->
+            <div class="mb-5 space-y-2 text-xs text-slate-700">
+                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">City Key Features</h4>
+                <div class="flex items-start space-x-2">
+                    <i class="fa-solid fa-check-circle text-emerald-600 mt-0.5"></i>
+                    <span><strong>100% Renewable Energy:</strong> Rooftop solar panels, EV chargers, and wind turbines.</span>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fa-solid fa-check-circle text-emerald-600 mt-0.5"></i>
+                    <span><strong>Zero-Emission Transit:</strong> Electric Buses, EV Cars, and Elevated Maglev Train.</span>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fa-solid fa-check-circle text-emerald-600 mt-0.5"></i>
+                    <span><strong>Smart Traffic & Sanitation:</strong> AI Smart Signal Lights, color-coded 3-bin waste segregation & central rainwater lake.</span>
+                </div>
+            </div>
+
+            <!-- Card Footer & QR code mockup -->
+            <div class="pt-4 border-t border-slate-200 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-16 h-16 bg-slate-900 rounded-xl p-1.5 flex items-center justify-center">
+                        <!-- SVG QR Code -->
+                        <svg class="w-full h-full text-white fill-current" viewBox="0 0 24 24">
+                            <path d="M2,2H10V10H2V2M4,4V8H8V4H4M11,2H13V4H11V2M14,2H22V10H14V2M16,4V8H20V4H16M2,14H10V22H2V14M4,16V20H8V16H4M11,14H13V16H11V14M14,14H16V16H14V14M18,14H20V16H18V14M11,17H13V19H11V17M14,17H16V19H14V17M17,17H19V20H17V17M11,20H13V22H11V20M14,20H16V22H14V20M20,20H22V22H20V20Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-[11px] font-bold text-slate-800">Scan For Exhibition Audio</div>
+                        <div class="text-[10px] text-slate-500">ISWK Science & Tech AI Exhibition</div>
+                    </div>
+                </div>
+
+                <button onclick="window.print()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print Card</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3D Engine Script -->
+    <script>
+        let scene, camera, renderer, controls;
+        let trainMesh, fountainParticles = [], turbineBlades = [];
+        let eBusGroup, evCarsList = [], trafficLightsList = [];
+        let clickableObjects = [];
+        let dayNightState = true; // true = Day, false = Night
+        let synth = window.speechSynthesis;
+
+        // Hotspot Info Data matching physical model
+        const hotspotData = {
+            ebus: {
+                title: "Zero-Emission Electric Buses (E-Buses)",
+                badge: "Eco Public Transport",
+                desc: "Powered entirely by quiet solar battery packs. Features wireless dynamic inductive charging stops along the route to eliminate carbon emissions and reduce city air pollution."
+            },
+            evcars: {
+                title: "Electric Vehicles & Solar EV Charging Hub",
+                badge: "Clean Energy Mobility",
+                desc: "Smart electric cars with rapid solar charging stations. Modern grid integration allows vehicle-to-grid energy sharing during peak power requirements."
+            },
+            smartsignals: {
+                title: "AI Smart Signal Lights",
+                badge: "AI Traffic Grid",
+                desc: "Equipped with automated vehicle sensors and emergency priority systems. Dynamically adjusts light timing in real-time based on traffic density to reduce idling."
+            },
+            lake: {
+                title: "Central Clean Lake & Fountain",
+                badge: "Water Conservation",
+                desc: "Acts as a central rainwater catchment basin. The powered center fountain aerates the water to maintain aquatic eco-balance while cooling the urban surroundings."
+            },
+            maglev: {
+                title: "Elevated Maglev Train",
+                badge: "Zero-Emission Transport",
+                desc: "Runs smoothly on green support pillars above the road loop. Driven by magnetic levitation for frictionless, high-speed, zero-pollution public transit."
+            },
+            solar: {
+                title: "Rooftop Solar Buildings",
+                badge: "Clean Energy",
+                desc: "Equipped with high-performance solar photovoltaic panels that harvest sunlight to power city streetlights, residential homes, and EV charging stations."
+            },
+            wind: {
+                title: "Eco Wind Turbines",
+                badge: "Renewable Power",
+                desc: "Converts wind breeze into clean electricity, complementing the solar grid for uninterrupted 24/7 sustainable energy."
+            },
+            waste: {
+                title: "3-Bin Waste Segregation",
+                badge: "Smart Sanitation",
+                desc: "Color-coded waste management bins (Blue for Recyclables, Yellow for Dry Waste, Red for Hazardous) teaching students and citizens responsible waste disposal."
+            },
+            smartlights: {
+                title: "Solar Smart Light Poles",
+                badge: "AI Infrastructure",
+                desc: "Equipped with auto-dimming sensors and top solar panels to optimize electricity consumption during day and night cycles."
+            },
+            verticalgarden: {
+                title: "Vertical Garden Walls",
+                badge: "Urban Greening",
+                desc: "Lush vertical foliage planted along building facades to purify city air, reduce urban heat island effects, and absorb noise pollution."
+            },
+            wifi: {
+                title: "AI Traffic Signals & 5G Poles",
+                badge: "Smart Connectivity",
+                desc: "Integrated smart sensors that monitor traffic density in real-time, prioritize electric buses, and offer public Wi-Fi connectivity."
+            }
+        };
+
+        function initScene() {
+            const container = document.getElementById('webgl-canvas');
+            
+            // Scene & Fog
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0e1726);
+            scene.fog = new THREE.FogExp2(0x0e1726, 0.012);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 22, 32);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.02;
+            controls.minDistance = 10;
+            controls.maxDistance = 55;
+            controls.target.set(0, 0, 0);
+
+            // Lights
+            setupLighting();
+
+            // Build Scene Objects
+            buildBaseModel();
+
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('click', onCanvasClick);
+
+            // Start Loop
+            animate();
+        }
+
+        let ambientLight, dirLight, hemiLight;
+
+        function setupLighting() {
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            dirLight = new THREE.DirectionalLight(0xfff8e7, 1.2);
+            dirLight.position.set(20, 35, 15);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.bias = -0.0001;
+            scene.add(dirLight);
+
+            hemiLight = new THREE.HemisphereLight(0xffffff, 0x334155, 0.4);
+            hemiLight.position.set(0, 50, 0);
+            scene.add(hemiLight);
+        }
+
+        function buildBaseModel() {
+            // Main Green Baseboard
+            const baseGeo = new THREE.BoxGeometry(34, 1, 26);
+            const baseMat = new THREE.MeshStandardMaterial({ color: 0x1b5e20, roughness: 0.6 });
+            const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+            baseMesh.position.y = -0.5;
+            baseMesh.receiveShadow = true;
+            scene.add(baseMesh);
+
+            // Blue Backdrop Board
+            const boardGeo = new THREE.BoxGeometry(34, 14, 0.8);
+            const boardMat = new THREE.MeshStandardMaterial({ color: 0x0288d1, roughness: 0.4 });
+            const board = new THREE.Mesh(boardGeo, boardMat);
+            board.position.set(0, 7, -12.5);
+            board.castShadow = true;
+            scene.add(board);
+
+            // Banner Title Text Box
+            const titleBoxGeo = new THREE.BoxGeometry(16, 3.5, 0.2);
+            const titleBoxMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+            const titleBox = new THREE.Mesh(titleBoxGeo, titleBoxMat);
+            titleBox.position.set(0, 11, -12);
+            scene.add(titleBox);
+
+            // Sun Model
+            const sunGeo = new THREE.CircleGeometry(1.8, 32);
+            const sunMat = new THREE.MeshBasicMaterial({ color: 0xfbc02d });
+            const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+            sunMesh.position.set(11, 11, -11.9);
+            scene.add(sunMesh);
+
+            // Central Clean Lake
+            const lakeGeo = new THREE.CylinderGeometry(4.5, 4.5, 0.1, 32);
+            const lakeMat = new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.1, metalness: 0.8 });
+            const lake = new THREE.Mesh(lakeGeo, lakeMat);
+            lake.position.set(0, 0.06, 2);
+            lake.userData = { key: 'lake' };
+            scene.add(lake);
+            clickableObjects.push(lake);
+
+            // Fountain in Lake
+            createFountain(0, 0.1, 2);
+
+            // Circular Road around Lake
+            createCircularRoad(0, 2);
+
+            // Elevated Maglev Train
+            createElevatedMaglevTrack(0, 2);
+
+            // Eco Buildings Background
+            createEcoBuildings();
+
+            // Wind Turbines
+            createWindTurbine(-11, 0, -5);
+            createWindTurbine(11, 0, -5);
+
+            // Vertical Garden Box
+            createVerticalGarden(13, 0, 4);
+
+            // Electric Vehicles & Charging Stations
+            createElectricVehicles();
+
+            // Smart AI Signals
+            createSmartAISignals();
+
+            // Smart Infrastructure Items
+            createSmartInfrastructure();
+
+            // Trees and Greenery
+            createTrees();
+        }
+
+        function createFountain(x, y, z) {
+            const centerPipe = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.3, 1, 16),
+                new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 })
+            );
+            centerPipe.position.set(x, y + 0.5, z);
+            scene.add(centerPipe);
+
+            const count = 35;
+            const geo = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                positions[i * 3] = x + (Math.random() - 0.5) * 0.4;
+                positions[i * 3 + 1] = y + 1 + Math.random() * 1.5;
+                positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.4;
+            }
+
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xe0f7fa, size: 0.25, transparent: true, opacity: 0.8 });
+            const pSystem = new THREE.Points(geo, mat);
+            scene.add(pSystem);
+            fountainParticles.push(pSystem);
+        }
+
+        function createCircularRoad(cx, cz) {
+            const roadRingGeo = new THREE.RingGeometry(6.2, 9.2, 48);
+            const roadMat = new THREE.MeshStandardMaterial({ color: 0x262626, side: THREE.DoubleSide, roughness: 0.9 });
+            const road = new THREE.Mesh(roadRingGeo, roadMat);
+            road.rotation.x = -Math.PI / 2;
+            road.position.set(cx, 0.02, cz);
+            road.receiveShadow = true;
+            scene.add(road);
+
+            // White Lane Dashes
+            const dashesGeo = new THREE.RingGeometry(7.6, 7.8, 48);
+            const dashesMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+            const dashes = new THREE.Mesh(dashesGeo, dashesMat);
+            dashes.rotation.x = -Math.PI / 2;
+            dashes.position.set(cx, 0.03, cz);
+            scene.add(dashes);
+        }
+
+        function createElevatedMaglevTrack(cx, cz) {
+            const curve = new THREE.EllipseCurve(cx, cz, 11, 11, 0, 2 * Math.PI, false, 0);
+            const points = curve.getPoints(64);
+            const points3D = points.map(p => new THREE.Vector3(p.x, 3.5, p.y));
+            
+            const path = new THREE.CatmullRomCurve3(points3D, true);
+            const tubeGeo = new THREE.TubeGeometry(path, 64, 0.3, 8, true);
+            const tubeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8, roughness: 0.2 });
+            const trackTube = new THREE.Mesh(tubeGeo, tubeMat);
+            trackTube.castShadow = true;
+            trackTube.userData = { key: 'maglev' };
+            scene.add(trackTube);
+            clickableObjects.push(trackTube);
+
+            const pillarCount = 8;
+            for (let i = 0; i < pillarCount; i++) {
+                const angle = (i / pillarCount) * Math.PI * 2;
+                const px = cx + Math.cos(angle) * 11;
+                const pz = cz + Math.sin(angle) * 11;
+
+                const pillar = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.35, 0.45, 3.5, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.5 })
+                );
+                pillar.position.set(px, 1.75, pz);
+                pillar.castShadow = true;
+                scene.add(pillar);
+            }
+
+            const trainGroup = new THREE.Group();
+            const carMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.5, roughness: 0.2 });
+            const blueStripeMat = new THREE.MeshStandardMaterial({ color: 0x0288d1 });
+
+            const car1 = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.9, 0.9), carMat);
+            car1.position.x = -1.5;
+            trainGroup.add(car1);
+
+            const car2 = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.9, 0.9), carMat);
+            car2.position.x = 1.5;
+            trainGroup.add(car2);
+
+            const stripe = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.25, 0.92), blueStripeMat);
+            stripe.position.y = 0.05;
+            trainGroup.add(stripe);
+
+            trainGroup.position.set(cx + 11, 3.8, cz);
+            trainGroup.userData = { key: 'maglev' };
+            scene.add(trainGroup);
+            trainMesh = trainGroup;
+            clickableObjects.push(trainGroup);
+        }
+
+        function createElectricVehicles() {
+            // Electric Bus Group (Green and White with solar battery roof)
+            eBusGroup = new THREE.Group();
+            
+            const busBody = new THREE.Mesh(
+                new THREE.BoxGeometry(2.6, 1.1, 1.1),
+                new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.3 })
+            );
+            busBody.castShadow = true;
+            eBusGroup.add(busBody);
+
+            const busRoof = new THREE.Mesh(
+                new THREE.BoxGeometry(2.6, 0.2, 1.1),
+                new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
+            );
+            busRoof.position.y = 0.6;
+            eBusGroup.add(busRoof);
+
+            // Battery Roof Pack
+            const batPack = new THREE.Mesh(
+                new THREE.BoxGeometry(1.4, 0.15, 0.8),
+                new THREE.MeshStandardMaterial({ color: 0x0288d1, metalness: 0.8 })
+            );
+            batPack.position.y = 0.75;
+            eBusGroup.add(batPack);
+
+            // Glass windows
+            const busGlass = new THREE.Mesh(
+                new THREE.BoxGeometry(2.4, 0.4, 1.12),
+                new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.1 })
+            );
+            busGlass.position.y = 0.2;
+            eBusGroup.add(busGlass);
+
+            eBusGroup.userData = { key: 'ebus' };
+            scene.add(eBusGroup);
+            clickableObjects.push(eBusGroup);
+
+            // Electric Cars Array (Moving dynamically on road circuit)
+            const carColors = [0xfbc02d, 0xec4899, 0x0288d1, 0x22c55e];
+            carColors.forEach((col, idx) => {
+                const carGroup = new THREE.Group();
+                const body = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.2, 0.5, 0.7),
+                    new THREE.MeshStandardMaterial({ color: col, roughness: 0.3 })
+                );
+                body.castShadow = true;
+                carGroup.add(body);
+
+                const top = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.7, 0.35, 0.65),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2 })
+                );
+                top.position.set(-0.05, 0.35, 0);
+                carGroup.add(top);
+
+                carGroup.userData = { key: 'evcars', offset: idx * (Math.PI / 2), speed: 0.3 + idx * 0.05 };
+                scene.add(carGroup);
+                evCarsList.push(carGroup);
+                clickableObjects.push(carGroup);
+            });
+
+            // Solar EV Fast Charging Station Hub along street
+            const chargerHub = new THREE.Group();
+            
+            // Canopy
+            const canopy = new THREE.Mesh(
+                new THREE.BoxGeometry(3.5, 0.2, 2),
+                new THREE.MeshStandardMaterial({ color: 0x16a34a })
+            );
+            canopy.position.y = 2.2;
+            chargerHub.add(canopy);
+
+            const canopySolar = new THREE.Mesh(
+                new THREE.BoxGeometry(3.4, 0.05, 1.9),
+                new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.9 })
+            );
+            canopySolar.position.y = 2.32;
+            chargerHub.add(canopySolar);
+
+            const cPillar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 2.2), new THREE.MeshStandardMaterial({ color: 0x64748b }));
+            cPillar1.position.set(-1.4, 1.1, 0.7);
+            chargerHub.add(cPillar1);
+
+            const cPillar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 2.2), new THREE.MeshStandardMaterial({ color: 0x64748b }));
+            cPillar2.position.set(1.4, 1.1, 0.7);
+            chargerHub.add(cPillar2);
+
+            // Charger Terminals
+            for (let i = -1; i <= 1; i += 1) {
+                const term = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.4, 0.9, 0.3),
+                    new THREE.MeshStandardMaterial({ color: 0xf8fafc })
+                );
+                term.position.set(i * 1.1, 0.45, -0.6);
+                
+                const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.2), new THREE.MeshBasicMaterial({ color: 0x22c55e }));
+                screen.position.set(i * 1.1, 0.6, -0.44);
+                chargerHub.add(term);
+                chargerHub.add(screen);
+            }
+
+            chargerHub.position.set(-7, 0, 8.5);
+            chargerHub.userData = { key: 'evcars' };
+            scene.add(chargerHub);
+            clickableObjects.push(chargerHub);
+        }
+
+        function createSmartAISignals() {
+            // Smart AI Traffic Lights at key intersections
+            const positions = [
+                { x: 7, z: 2, rot: Math.PI / 2 },
+                { x: -7, z: 2, rot: -Math.PI / 2 },
+                { x: 0, z: -5, rot: 0 }
+            ];
+
+            positions.forEach(pos => {
+                const signalGroup = new THREE.Group();
+                
+                const pole = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.08, 0.1, 3.2),
+                    new THREE.MeshStandardMaterial({ color: 0x334155 })
+                );
+                pole.position.y = 1.6;
+                signalGroup.add(pole);
+
+                const box = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.3, 0.9, 0.3),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a })
+                );
+                box.position.set(0, 2.7, 0);
+                signalGroup.add(box);
+
+                // Red, Yellow, Green bulbs
+                const rGeo = new THREE.SphereGeometry(0.08, 12, 12);
+                
+                const rMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+                const yMat = new THREE.MeshBasicMaterial({ color: 0xeab308 });
+                const gMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
+
+                const redBulb = new THREE.Mesh(rGeo, rMat);
+                redBulb.position.set(0, 2.95, 0.16);
+                signalGroup.add(redBulb);
+
+                const yelBulb = new THREE.Mesh(rGeo, yMat);
+                yelBulb.position.set(0, 2.7, 0.16);
+                signalGroup.add(yelBulb);
+
+                const grnBulb = new THREE.Mesh(rGeo, gMat);
+                grnBulb.position.set(0, 2.45, 0.16);
+                signalGroup.add(grnBulb);
+
+                // Top AI Sensor Dish / Badge
+                const sensor = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.25, 0.05, 0.2, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x0288d1, metalness: 0.8 })
+                );
+                sensor.position.set(0, 3.25, 0);
+                signalGroup.add(sensor);
+
+                signalGroup.position.set(pos.x, 0, pos.z);
+                signalGroup.rotation.y = pos.rot;
+                signalGroup.userData = { key: 'smartsignals' };
+                scene.add(signalGroup);
+
+                trafficLightsList.push({ group: signalGroup, red: redBulb, yellow: yelBulb, green: grnBulb });
+                clickableObjects.push(signalGroup);
+            });
+        }
+
+        function createEcoBuildings() {
+            // Main Central Building (Brown textured with rooftop solar)
+            const b1Group = new THREE.Group();
+            const b1 = new THREE.Mesh(
+                new THREE.BoxGeometry(5, 7, 4),
+                new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.8 })
+            );
+            b1.position.y = 3.5;
+            b1.castShadow = true;
+            b1Group.add(b1);
+
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 2; c++) {
+                    const win = new THREE.Mesh(
+                        new THREE.PlaneGeometry(0.9, 1.1),
+                        new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.9, roughness: 0.1 })
+                    );
+                    win.position.set(c * 2 - 1, r * 1.8 + 1.8, 2.02);
+                    b1Group.add(win);
+                }
+            }
+
+            const panel1 = new THREE.Mesh(
+                new THREE.BoxGeometry(4.2, 0.1, 3.2),
+                new THREE.MeshStandardMaterial({ color: 0x1a237e, metalness: 0.9, roughness: 0.1 })
+            );
+            panel1.position.set(0, 7.15, 0);
+            panel1.rotation.x = -0.2;
+            b1Group.add(panel1);
+
+            b1Group.position.set(-4, 0, -8);
+            b1Group.userData = { key: 'solar' };
+            scene.add(b1Group);
+            clickableObjects.push(b1Group);
+
+            // Tall Yellow-Brown Tower
+            const b2Group = new THREE.Group();
+            const b2 = new THREE.Mesh(
+                new THREE.BoxGeometry(5.5, 9, 4.5),
+                new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.5 })
+            );
+            b2.position.y = 4.5;
+            b2.castShadow = true;
+            b2Group.add(b2);
+
+            const panel2 = new THREE.Mesh(
+                new THREE.BoxGeometry(4.5, 0.1, 3.5),
+                new THREE.MeshStandardMaterial({ color: 0x0d47a1, metalness: 0.9 })
+            );
+            panel2.position.set(0, 9.15, 0);
+            panel2.rotation.x = -0.15;
+            b2Group.add(panel2);
+
+            b2Group.position.set(3.5, 0, -8.5);
+            b2Group.userData = { key: 'solar' };
+            scene.add(b2Group);
+            clickableObjects.push(b2Group);
+        }
+
+        function createWindTurbine(x, y, z) {
+            const group = new THREE.Group();
+            
+            const pole = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.25, 7, 16),
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2 })
+            );
+            pole.position.y = 3.5;
+            pole.castShadow = true;
+            group.add(pole);
+
+            const head = new THREE.Mesh(
+                new THREE.BoxGeometry(0.6, 0.6, 1),
+                new THREE.MeshStandardMaterial({ color: 0xe2e8f0 })
+            );
+            head.position.y = 7;
+            group.add(head);
+
+            const bladeGroup = new THREE.Group();
+            bladeGroup.position.set(0, 7, 0.55);
+
+            for (let i = 0; i < 3; i++) {
+                const blade = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.18, 2.8, 0.04),
+                    new THREE.MeshStandardMaterial({ color: 0xffffff })
+                );
+                blade.position.y = 1.3;
+                blade.rotation.z = (i * Math.PI * 2) / 3;
+                bladeGroup.add(blade);
+            }
+
+            group.add(bladeGroup);
+            group.position.set(x, y, z);
+            group.userData = { key: 'wind' };
+            scene.add(group);
+
+            turbineBlades.push(bladeGroup);
+            clickableObjects.push(group);
+        }
+
+        function createVerticalGarden(x, y, z) {
+            const boxGroup = new THREE.Group();
+            const wall = new THREE.Mesh(
+                new THREE.BoxGeometry(4.5, 6, 2.5),
+                new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 0.9 })
+            );
+            wall.position.y = 3;
+            wall.castShadow = true;
+            boxGroup.add(wall);
+
+            for (let i = 0; i < 15; i++) {
+                const leaf = new THREE.Mesh(
+                    new THREE.DodecahedronGeometry(0.4 + Math.random() * 0.3),
+                    new THREE.MeshStandardMaterial({ color: 0x1b5e20 })
+                );
+                leaf.position.set((Math.random() - 0.5) * 3.5, Math.random() * 5 + 0.5, 1.3);
+                boxGroup.add(leaf);
+            }
+
+            boxGroup.position.set(x, y, z);
+            boxGroup.userData = { key: 'verticalgarden' };
+            scene.add(boxGroup);
+            clickableObjects.push(boxGroup);
+        }
+
+        function createSmartInfrastructure() {
+            // Waste Bins
+            const binsGroup = new THREE.Group();
+            const binColors = [0x0288d1, 0xfbc02d, 0xd32f2f];
+            
+            binColors.forEach((col, idx) => {
+                const bin = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.5, 0.8, 0.5),
+                    new THREE.MeshStandardMaterial({ color: col, roughness: 0.4 })
+                );
+                bin.position.set(idx * 0.65 - 0.65, 0.4, 0);
+                bin.castShadow = true;
+                binsGroup.add(bin);
+            });
+
+            binsGroup.position.set(-3.5, 0, 7.5);
+            binsGroup.userData = { key: 'waste' };
+            scene.add(binsGroup);
+            clickableObjects.push(binsGroup);
+
+            // Smart Streetlight Pole
+            const lightGroup = new THREE.Group();
+            const pole = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.08, 0.08, 3.5),
+                new THREE.MeshStandardMaterial({ color: 0x334155 })
+            );
+            pole.position.y = 1.75;
+            lightGroup.add(pole);
+
+            const lampHead = new THREE.Mesh(
+                new THREE.BoxGeometry(0.8, 0.15, 0.3),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a })
+            );
+            lampHead.position.set(0.3, 3.5, 0);
+            lightGroup.add(lampHead);
+
+            lightGroup.position.set(-1, 0, 7.2);
+            lightGroup.userData = { key: 'smartlights' };
+            scene.add(lightGroup);
+            clickableObjects.push(lightGroup);
+
+            // AI Wi-Fi Pole
+            const wifiGroup = new THREE.Group();
+            const wPole = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.08, 0.08, 3.2),
+                new THREE.MeshStandardMaterial({ color: 0x475569 })
+            );
+            wPole.position.y = 1.6;
+            wifiGroup.add(wPole);
+
+            const wifiSign = new THREE.Mesh(
+                new THREE.CircleGeometry(0.4, 16),
+                new THREE.MeshBasicMaterial({ color: 0x0288d1, side: THREE.DoubleSide })
+            );
+            wifiSign.position.set(0, 3.2, 0);
+            wifiGroup.add(wifiSign);
+
+            wifiGroup.position.set(7.5, 0, 7);
+            wifiGroup.userData = { key: 'wifi' };
+            scene.add(wifiGroup);
+            clickableObjects.push(wifiGroup);
+        }
+
+        function createTrees() {
+            const coneColors = [0x2e7d32, 0x388e3c, 0x1b5e20];
+            for (let i = 0; i < 8; i++) {
+                const tree = new THREE.Group();
+                const trunk = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.12, 0.2, 1),
+                    new THREE.MeshStandardMaterial({ color: 0x4e342e })
+                );
+                trunk.position.y = 0.5;
+                tree.add(trunk);
+
+                const leaves = new THREE.Mesh(
+                    new THREE.ConeGeometry(1.1, 2.5, 8),
+                    new THREE.MeshStandardMaterial({ color: coneColors[i % 3] })
+                );
+                leaves.position.y = 2.1;
+                leaves.castShadow = true;
+                tree.add(leaves);
+
+                const angle = (i / 8) * Math.PI * 2;
+                tree.position.set(Math.cos(angle) * 12.5, 0, Math.sin(angle) * 9.5 + 1);
+                scene.add(tree);
+            }
+        }
+
+        // Camera Hotspot Selector
+        window.selectHotspot = function(key) {
+            const data = hotspotData[key];
+            if (!data) return;
+
+            document.getElementById('inspectTitle').innerText = data.title;
+            document.getElementById('inspectBadge').innerText = data.badge;
+            document.getElementById('inspectDesc').innerText = data.desc;
+
+            let targetPos = new THREE.Vector3(0, 0, 0);
+
+            switch(key) {
+                case 'ebus': targetPos.set(0, 2, 8); break;
+                case 'evcars': targetPos.set(-7, 2, 8.5); break;
+                case 'smartsignals': targetPos.set(7, 3, 2); break;
+                case 'lake': targetPos.set(0, 3, 2); break;
+                case 'maglev': targetPos.set(8, 5, 2); break;
+                case 'solar': targetPos.set(-4, 6, -6); break;
+                case 'wind': targetPos.set(-10, 6, -4); break;
+                case 'waste': targetPos.set(-3.5, 2, 7.5); break;
+                case 'smartlights': targetPos.set(-1, 2, 7.2); break;
+                case 'verticalgarden': targetPos.set(12, 4, 4); break;
+                case 'wifi': targetPos.set(7.5, 3, 7); break;
+            }
+
+            animateCameraTo(targetPos);
+
+            if (synth.speaking) synth.cancel();
+            const utterance = new SpeechSynthesisUtterance(data.title + ". " + data.desc);
+            utterance.rate = 0.95;
+            synth.speak(utterance);
+        }
+
+        function animateCameraTo(targetLook) {
+            const startLook = controls.target.clone();
+            const startCam = camera.position.clone();
+            const endCam = new THREE.Vector3(targetLook.x + 8, targetLook.y + 8, targetLook.z + 12);
+
+            let progress = 0;
+            function step() {
+                progress += 0.05;
+                if (progress <= 1) {
+                    controls.target.lerpVectors(startLook, targetLook, progress);
+                    camera.position.lerpVectors(startCam, endCam, progress);
+                    controls.update();
+                    requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        window.resetInspectView = function() {
+            document.getElementById('inspectTitle').innerText = "Click any object in 3D scene";
+            document.getElementById('inspectBadge').innerText = "Select Element";
+            document.getElementById('inspectDesc').innerText = "Explore the Satat Pur physical exhibition replica created by Class 1 A students. Click on any model element or use the quick buttons above.";
+
+            const targetLook = new THREE.Vector3(0, 0, 0);
+            const targetCam = new THREE.Vector3(0, 22, 32);
+
+            let progress = 0;
+            function step() {
+                progress += 0.05;
+                if (progress <= 1) {
+                    controls.target.lerp(targetLook, progress);
+                    camera.position.lerp(targetCam, progress);
+                    controls.update();
+                    requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        function onCanvasClick(event) {
+            if (event.target.closest('aside') || event.target.closest('header') || event.target.closest('#takeAwayModal')) return;
+
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+
+            const intersects = raycaster.intersectObjects(clickableObjects, true);
+
+            if (intersects.length > 0) {
+                let obj = intersects[0].object;
+                while (obj && !obj.userData?.key && obj.parent) {
+                    obj = obj.parent;
+                }
+                if (obj && obj.userData && obj.userData.key) {
+                    selectHotspot(obj.userData.key);
+                }
+            }
+        }
+
+        window.toggleDayNight = function() {
+            dayNightState = !dayNightState;
+            const btnText = document.getElementById('dayNightText');
+            const icon = document.getElementById('dayNightIcon');
+
+            if (!dayNightState) {
+                scene.background.set(0x030712);
+                scene.fog.color.set(0x030712);
+                ambientLight.intensity = 0.2;
+                dirLight.intensity = 0.2;
+                dirLight.color.set(0x38bdf8);
+                btnText.innerText = "Night View";
+                icon.className = "fa-solid fa-moon";
+            } else {
+                scene.background.set(0x0e1726);
+                scene.fog.color.set(0x0e1726);
+                ambientLight.intensity = 0.7;
+                dirLight.intensity = 1.2;
+                dirLight.color.set(0xfff8e7);
+                btnText.innerText = "Day View";
+                icon.className = "fa-solid fa-sun";
+            }
+        }
+
+        window.toggleAudioSpeech = function() {
+            const text = document.getElementById('audioText');
+            if (synth.speaking) {
+                synth.cancel();
+                text.innerText = "Audio Guide";
+            } else {
+                const msg = "Welcome to Satat Pur, a cleaner, greener, happier Indian city project designed by Class 1 A Eco Kids Avyukth, Nour, Syed Affan, and Brahmani.";
+                const utterance = new SpeechSynthesisUtterance(msg);
+                synth.speak(utterance);
+                text.innerText = "Playing...";
+            }
+        }
+
+        window.openTakeAwayModal = function() {
+            document.getElementById('takeAwayModal').classList.remove('hidden');
+        }
+
+        window.closeTakeAwayModal = function() {
+            document.getElementById('takeAwayModal').classList.add('hidden');
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // 1. Maglev Train
+            if (trainMesh) {
+                const angle = elapsedTime * 0.4;
+                trainMesh.position.x = Math.cos(angle) * 11;
+                trainMesh.position.z = Math.sin(angle) * 11 + 2;
+                trainMesh.rotation.y = -angle + Math.PI / 2;
+            }
+
+            // 2. Electric Bus Circuit Drive
+            if (eBusGroup) {
+                const busAngle = elapsedTime * 0.25;
+                eBusGroup.position.x = Math.cos(busAngle) * 7.7;
+                eBusGroup.position.z = Math.sin(busAngle) * 7.7 + 2;
+                eBusGroup.position.y = 0.55;
+                eBusGroup.rotation.y = -busAngle + Math.PI / 2;
+            }
+
+            // 3. EV Cars Road Circuit Movement
+            evCarsList.forEach(car => {
+                const carAngle = elapsedTime * car.userData.speed + car.userData.offset;
+                car.position.x = Math.cos(carAngle) * 7.7;
+                car.position.z = Math.sin(carAngle) * 7.7 + 2;
+                car.position.y = 0.3;
+                car.rotation.y = -carAngle + Math.PI / 2;
+            });
+
+            // 4. Smart Traffic Signal Lights Pulsing Animation
+            trafficLightsList.forEach((tl, i) => {
+                const cycle = Math.floor((elapsedTime + i * 2) % 6);
+                tl.red.material.opacity = (cycle < 2) ? 1.0 : 0.2;
+                tl.yellow.material.opacity = (cycle >= 2 && cycle < 3) ? 1.0 : 0.2;
+                tl.green.material.opacity = (cycle >= 3) ? 1.0 : 0.2;
+                tl.red.material.transparent = true;
+                tl.yellow.material.transparent = true;
+                tl.green.material.transparent = true;
+            });
+
+            // 5. Rotate Wind Turbines
+            turbineBlades.forEach(b => {
+                b.rotation.z += 0.04;
+            });
+
+            // 6. Fountain Water Effect
+            fountainParticles.forEach(pSystem => {
+                const positions = pSystem.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length / 3; i++) {
+                    positions[i * 3 + 1] += 0.02;
+                    if (positions[i * 3 + 1] > 2.2) {
+                        positions[i * 3 + 1] = 0.2;
+                    }
+                }
+                pSystem.geometry.attributes.position.needsUpdate = true;
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('load', initScene);
+    </script>
+</body>
+</html>
